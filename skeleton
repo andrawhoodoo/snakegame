@@ -24,3 +24,15 @@ class Snake {
 
 let bigSnake = new Snake();
 let littleSnake = new Snake();
+
+bigSnake.move(7);
+bigSnake.turn();
+bigSnake.move(5);
+console.log("Big Snake is at position", bigSnake.position);
+
+littleSnake.turn();
+littleSnake.move(1);
+littleSnake.move(3);
+littleSnake.turn();
+littleSnake.move(4);
+console.log("Little Snake is at position", littleSnake.position)
