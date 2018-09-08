@@ -1,0 +1,26 @@
+class Snake {
+  constructor() {
+    this.currentPos_ = 0;
+    this.currentDir_ = "forward";
+  }
+  turn() {
+    if (this.currentDir_ == "forward") {
+      this.currentDir_ = "backward"
+    }
+    else {
+      this.currentDir_ = "forward"
+    }
+  }
+  move(x) {
+    if (this.currentDir_ == "forward") {      
+      this.currentPos_ = this.currentPos_ + x;
+    }
+
+    else {
+      this.currentPos_ = this.currentPos_ - x;
+    }
+  }
+}
+
+let bigSnake = new Snake();
+let littleSnake = new Snake();
