@@ -5,10 +5,10 @@ class Snake {
   }
   turn() {
     if (this.currentDir_ == "forward") {
-      this.currentDir_ = "backward"
+      this.currentDir_ = "backward";
     }
     else {
-      this.currentDir_ = "forward"
+      this.currentDir_ = "forward";
     }
   }
   move(x) {
@@ -35,4 +35,4 @@ littleSnake.move(1);
 littleSnake.move(3);
 littleSnake.turn();
 littleSnake.move(4);
-console.log("Little Snake is at position", littleSnake.position)
+console.log("Little Snake is at position", littleSnake.position);
