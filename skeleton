@@ -1,38 +1,100 @@
-class Snake {
-  constructor() {
-    this.currentPos_ = 0;
-    this.currentDir_ = "forward";
+class Point {
+  constructor(x, y) {
+    this.x_ = x;
+    this.y_ = y;
   }
-  turn() {
-    if (this.currentDir_ == "forward") {
-      this.currentDir_ = "backward";
-    }
-    else {
-      this.currentDir_ = "forward";
-    }
+  get posX() {
+    return this.x_;
   }
-  move(x) {
-    if (this.currentDir_ == "forward") {      
-      this.currentPos_ = this.currentPos_ + x;
-    }
-
-    else {
-      this.currentPos_ = this.currentPos_ - x;
-    }
+  get posY() {
+    return this.y_;
   }
 }
 
+class Snake {
+  constructor() {
+    this.pos_ = new Point(0, 0);
+    this.currentDir_ = "forward";
+  }
+  turnLeft() {
+    if (this.currentDir_ === "forward") {
+      this.currentDir_ = "up";
+    }
+    else if(this.currentDir_ === "up") {
+      this.currentDir_ = "backward";
+    }
+    else if(this.currentDir_ === "backward") {
+      this.currentDir_ = "down";
+    }
+    else if(this.currentDir_ === "down") {
+      this.currentDir_ = "forward";
+    }
+  }
+  turnRight() {
+    if (this.currentDir_ === "forward") {
+      this.currentDir_ = "down";
+    }
+    else if(this.currentDir_ === "up") {
+      this.currentDir_ = "forward";
+    }
+    else if(this.currentDir_ === "backward") {
+      this.currentDir_ = "up";
+    }
+    else if(this.currentDir_ === "down") {
+      this.currentDir_ = "backward";
+    }
+  }
+
+  move(steps) {
+    if (this.currentDir_ === "forward") {      
+      this.pos_.x_ = this.pos_.x_ + steps;
+    }
+
+    else if(this.currentDir_ === "backward") {
+      this.pos_.x_ = this.pos_.x_ - steps;
+    }
+    else if(this.currentDir_ === "up") {
+      this.pos_.y_ = this.pos_.y_ + steps;
+    }
+    else if(this.currentDir_ === "down") {
+      this.pos_.y_ = this.pos_.y_ - steps;
+    }
+  }
+  get position() {
+    return this.pos_;
+  }
+}
+
+class WorldModel {
+  constructor() {
+    this.snake = new Snake();
+  }
+  update(steps) {
+    this.snake.move(steps);
+  }
+}
+
+/*
 let bigSnake = new Snake();
 let littleSnake = new Snake();
 
 bigSnake.move(7);
-bigSnake.turn();
+bigSnake.turnLeft();
 bigSnake.move(5);
-console.log("Big Snake is at position", bigSnake.position);
+console.log("Big Snake is at position (", bigSnake.position.posX, ",", bigSnake.position.posY, ")");
 
-littleSnake.turn();
+littleSnake.turnRight();
 littleSnake.move(1);
 littleSnake.move(3);
-littleSnake.turn();
+littleSnake.turnLeft();
 littleSnake.move(4);
-console.log("Little Snake is at position", littleSnake.position);
+console.log("Little Snake is at position (", littleSnake.position.posX, ",", littleSnake.position.posY, ")");
+*/
+
+let gameTime = new WorldModel();
+
+gameTime.update(13);
+gameTime.snake.turnLeft();
+gameTime.update(7);
+
+console.log("Our snake is at", gameTime.snake.position);
