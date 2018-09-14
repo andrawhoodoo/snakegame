@@ -47,17 +47,17 @@ class Snake {
 
   move(steps) {
     if (this.currentDir_ === "forward") {      
-      this.pos_.x_ = this.pos_.x_ + steps;
+      this.pos_ = new Point(this.position.posX + steps, this.position.posY);
     }
 
     else if(this.currentDir_ === "backward") {
-      this.pos_.x_ = this.pos_.x_ - steps;
+      this.pos_ = new Point(this.position.posX - steps, this.position.posY);
     }
     else if(this.currentDir_ === "up") {
-      this.pos_.y_ = this.pos_.y_ + steps;
+      this.pos_ = new Point(this.position.posX, this.position.posY + steps);
     }
     else if(this.currentDir_ === "down") {
-      this.pos_.y_ = this.pos_.y_ - steps;
+      this.pos_ = new Point(this.position.posX, this.position.posY - steps);
     }
   }
   get position() {
@@ -77,8 +77,10 @@ class WorldModel {
 /*
 let bigSnake = new Snake();
 let littleSnake = new Snake();
+console.log(bigSnake.position);
 
 bigSnake.move(7);
+console.log(bigSnake.position);
 bigSnake.turnLeft();
 bigSnake.move(5);
 console.log("Big Snake is at position (", bigSnake.position.posX, ",", bigSnake.position.posY, ")");
@@ -98,3 +100,4 @@ gameTime.snake.turnLeft();
 gameTime.update(7);
 
 console.log("Our snake is at", gameTime.snake.position);
+
