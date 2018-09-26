@@ -75,6 +75,9 @@ class WorldModel {
   update(steps) {
     this.snake_.move(steps);
   }
+  get snake() {
+    return this.snake_;
+  }
 }
 
 /*
@@ -99,8 +102,7 @@ let friendlySnake = new Snake();
 let gameTime = new WorldModel(friendlySnake);
 
 gameTime.update(13);
-gameTime.snake_.turnLeft();
+gameTime.snake.turnLeft();
 gameTime.update(7);
 
 console.log("Our snake is at", gameTime.snake_.position);
-
