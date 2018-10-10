@@ -14,34 +14,34 @@ class Point {
 class Snake {
   constructor() {
     this.pos_ = new Point(0, 0);
-    this.currentDir_ = "forward";
+    this.currentDir_ = "right";
   }
   turnLeft() {
-    if (this.currentDir_ === "forward") {
+    if (this.currentDir_ === "right") {
       this.currentDir_ = "up";
     }
     else if(this.currentDir_ === "up") {
-      this.currentDir_ = "backward";
+      this.currentDir_ = "left";
     }
-    else if(this.currentDir_ === "backward") {
+    else if(this.currentDir_ === "left") {
       this.currentDir_ = "down";
     }
     else if(this.currentDir_ === "down") {
-      this.currentDir_ = "forward";
+      this.currentDir_ = "right";
     }
   }
   turnRight() {
-    if (this.currentDir_ === "forward") {
+    if (this.currentDir_ === "right") {
       this.currentDir_ = "down";
     }
     else if(this.currentDir_ === "up") {
-      this.currentDir_ = "forward";
+      this.currentDir_ = "right";
     }
-    else if(this.currentDir_ === "backward") {
+    else if(this.currentDir_ === "left") {
       this.currentDir_ = "up";
     }
     else if(this.currentDir_ === "down") {
-      this.currentDir_ = "backward";
+      this.currentDir_ = "left";
     }
   }
 
@@ -63,20 +63,99 @@ class Snake {
   get position() {
     return this.pos_;
   }
+  get direction() {
+    return this.currentDir_;
+  }
 }
 
 class WorldModel {
-  constructor(s) {
+  constructor(s, w, h) {
     if(s instanceof Snake) {
       this.snake_ = s;
     }
     else throw new Error("Not given a valid Snake");
+    this.width_ = w || 100;
+    this.height_ = h || 100;
   }
   update(steps) {
     this.snake_.move(steps);
   }
   get snake() {
     return this.snake_;
+  }
+  get width() {
+    return this.width_;
+  }
+  get height() {
+    return this.height_;
+  }
+}
+
+class SnakeController {
+  constructor(World, Snake) {
+    this.snakeWorld_ = World;
+    this.slitherer_ = Snake;
+  }
+  turnSnakeLeft() {
+    this.slitherer_.turnLeft();
+  }
+  turnSnakeRight() {
+    this.slitherer_.turnRight();
+  }
+  get snakePosition() {
+    return this.slitherer_.position;
+  }
+  get snakeDirection() {
+    return this.slitherer_.direction;
+  }
+  get worldHeight() {
+    return this.snakeWorld_.height;
+  }
+  get worldWidth() {
+    return this.snakeWorld_.width;
+  }
+}
+
+class Player {
+  constructor(snakeController) {
+    this.sc_ = snakeController;
+    if(this.constructor === Player) throw new Error("Cannot instantiate a Player, which is an abstract base class");
+    else if(!(this.makeTurn instanceof Function)) throw new Error("Base class must implement makeTurn method");
+  }
+}
+
+class AvoidWallsPlayer extends Player {
+  constructor() {
+    super();
+  }
+  makeTurn() {
+    if(this.sc_.snakeDirection === "left" && this.sc_.slitherer_.position.posX == 0) {
+      if(this.sc_.slitherer_.position.posY < (this.sc_.worldHeight - 1)/2) {
+        this.sc_.turnSnakeLeft();
+      }
+      else this.sc_.turnSnakeRight(); 
+    }
+    else if(this.sc_.snakeDirection === "right" && this.sc_.slitherer_.position.posX == (this.sc_.worldWidth - 1)) {
+      if(this.sc_.slitherer_.position.posY < (this.sc_.worldHeight - 1)/2) {
+        this.sc_.turnSnakeRight();
+      }
+      else this.sc_.turnSnakeLeft();
+    }
+    else if(this.sc_.snakeDirection === "up" && this.sc_.slitherer_.position.posY == 0) {
+      if(this.sc_.slitherer_.position.posX < (this.sc_.worldWidth - 1)/2) {
+        this.sc_.turnSnakeRight();
+      }
+      else this.sc_.turnSnakeLeft();
+    }
+    else if(this.sc_.snakeDirection === "down" && this.sc_.slitherer_.position.posY == (this.sc_.worldHeight - 1)) {
+      if(this.sc_.slitherer_.position.posX < (this.sc_.worldWidth - 1)/2) {
+        this.sc_.turnSnakeLeft();
+      }
+      else this.sc_.turnSnakeRight();
+    }
+    else {
+      pass;
+    }
   }
 }
 
@@ -100,9 +179,10 @@ console.log("Little Snake is at position (", littleSnake.position.posX, ",", lit
 */
 let friendlySnake = new Snake();
 let gameTime = new WorldModel(friendlySnake);
-
 gameTime.update(13);
 gameTime.snake.turnLeft();
 gameTime.update(7);
 
 console.log("Our snake is at", gameTime.snake_.position);
+
+
