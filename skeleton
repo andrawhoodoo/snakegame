@@ -99,9 +99,7 @@ class Snake {
   }
 }
 
-/**
- * Model Class representing a virtual world for a Snake.
- */
+/** Model Class representing a virtual world for a Snake. */
 class WorldModel {
   /**
    * Creates a world model and ensures that an instance of Snake class is passed.
@@ -144,9 +142,7 @@ class WorldModel {
   }
 }
 
-/**
- * Class representing a means for a player to control the way a Snake class moves in a WorldModel class.
- */
+/** Class representing a means for a player to control the way a Snake class moves in a WorldModel class. */
 class SnakeController {
   /**
    * Create a new SnakeController.
@@ -201,9 +197,7 @@ class SnakeController {
   }
 }
 
-/**
- * Abstract base class that ensures any object "Player" has the ability to make the snake turn.
- */
+/** Abstract base class that ensures any object of type "Player" has the ability to make the snake turn. */
 class Player {
   /**
    * Create a new player.
@@ -216,10 +210,17 @@ class Player {
   }
 }
 
+/**Class representing an AI snake game player that avoids crashing into walls. */
 class AvoidWallsPlayer extends Player {
+  /**
+   * Create an AvoidWallsPlayer by going to constructor of parent class Player.
+   */
   constructor() {
     super();
   }
+  /**
+   * Turns the snake to avoid crashing into walls. Turns towards the direction in which there is the most space to move.
+   */
   makeTurn() {
     if(this.sc_.snakeDirection === "left" && this.sc_.slitherer_.position.posX == 0) {
       if(this.sc_.slitherer_.position.posY < (this.sc_.worldHeight - 1)/2) {
@@ -278,4 +279,3 @@ let gameTime = new WorldModel(friendlySnake);
 let bigBrain = new SnakeController(gameTime, friendlySnake);
 //console.log(bigBrain.snakePosition);
 //console.log(bigBrain.snakeDirection);
-
