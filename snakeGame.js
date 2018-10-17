@@ -117,7 +117,7 @@ class WorldModel {
     this.view_ = null;
   }
   /**
-   * Moves the snake belonging to the WorldModel; updates the display.
+   * Moves the snake belonging to the WorldModel; updates the display of CanvasView if there is a paired CanvasView class with this WorldModel.
    * @param {int} steps - the input for the snake's move function.
    */
   update(steps) {
@@ -223,6 +223,7 @@ class Player {
 class AvoidWallsPlayer extends Player {
   /**
    * Create an AvoidWallsPlayer by going to constructor of parent class Player.
+   * @param {class} sc - the SnakeController you need to pass to the parent class.
    */
   constructor(sc) {
     super(sc);
@@ -261,14 +262,23 @@ class AvoidWallsPlayer extends Player {
   }
 }
 
+/** Interface class that ensures any type of view has a display method.*/
 class View {
+  /**
+   * Create a new view.
+   */
   constructor() {
     if(this.constructor === View) throw new Error("Cannot instantiate a View, which is an interface");
     else if(!(this.display instanceof Function)) throw new Error("View class must implement display method.");
   }
 }
 
+/** Class representing what our player sees on their screen.*/
 class CanvasView extends View {
+  /**
+   * Create a new CanvasView. Calls the constructor of the parent class View.
+   * @param {int} scalingFactor - integer with which the width and height for the canvas as well as the dimensions of the snake is determined.
+   */
   constructor(scalingFactor) {
     super();
     this.scalingFactor_ = scalingFactor;
@@ -276,7 +286,10 @@ class CanvasView extends View {
     document.body.appendChild(this.canvas_);
     this.context_= this.canvas_.getContext("2d");
   }
-
+  /**
+   * Determines the width and height of the canvas as well as the size of the snake utilizing the scaling factor property.  Also displays both the canvas and our snake's current position.
+   * @param {class} World - the WorldModel class in which our Snake class lives, i.e. the WorldModel we want to display.
+   */
   display(World) {
     this.canvas_.width = this.scalingFactor_ * World.width;
     this.canvas_.height = this.scalingFactor_ * World.height;
@@ -287,7 +300,6 @@ class CanvasView extends View {
 
 let friendlySnake = new Snake();
 let gameTime = new WorldModel(friendlySnake, 42, 42);
-
 let FooView = new CanvasView(10);
 gameTime.view = FooView;
 gameTime.update(0);
