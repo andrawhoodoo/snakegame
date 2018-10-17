@@ -102,7 +102,7 @@ class Snake {
 /** Model Class representing a virtual world for a Snake. */
 class WorldModel {
   /**
-   * Creates a world model and ensures that an instance of Snake class is passed.
+   * Creates a world model and ensures that an instance of Snake class is passed. Also initializes a view property.
    * @param {class} s - instance of snake class
    * @param {int} w - width of desired world view.  If no int passed, default to 100.
    * @param {int} h - height of desired world view. If no int passed, default to 100.
@@ -114,13 +114,17 @@ class WorldModel {
     else throw new Error("Not given a valid Snake");
     this.width_ = w || 100;
     this.height_ = h || 100;
+    this.view_ = null;
   }
   /**
-   * Moves the snake belonging to the WorldModel.
+   * Moves the snake belonging to the WorldModel; updates the display.
    * @param {int} steps - the input for the snake's move function.
    */
   update(steps) {
     this.snake_.move(steps);
+    if(!(this.view_ == null)) {
+      this.view_.display(this);
+    }
   }
   /**
    * @type {tuple}
@@ -139,6 +143,10 @@ class WorldModel {
    */
   get height() {
     return this.height_;
+  }
+  set view(newView) {
+    if(newView instanceof View) this.view_ = newView;
+    else throw new Error("must pass a valid View");
   }
 }
 
@@ -204,9 +212,10 @@ class Player {
    * @param {class} snakeController - the SnakeController class you wish to use.
    */
   constructor(snakeController) {
-    this.sc_ = snakeController;
+    if(!(snakeController instanceof SnakeController)) throw new Error("Not given a valid Snake Controller.");
+    else this.sc_ = snakeController;
     if(this.constructor === Player) throw new Error("Cannot instantiate a Player, which is an abstract base class");
-    else if(!(this.makeTurn instanceof Function)) throw new Error("Base class must implement makeTurn method");
+    else if(!(this.makeTurn instanceof Function)) throw new Error("Base class must implement makeTurn method.");
   }
 }
 
@@ -215,8 +224,8 @@ class AvoidWallsPlayer extends Player {
   /**
    * Create an AvoidWallsPlayer by going to constructor of parent class Player.
    */
-  constructor() {
-    super();
+  constructor(sc) {
+    super(sc);
   }
   /**
    * Turns the snake to avoid crashing into walls. Turns towards the direction in which there is the most space to move.
@@ -252,6 +261,32 @@ class AvoidWallsPlayer extends Player {
   }
 }
 
+class View {
+  constructor() {
+    if(this.constructor === View) throw new Error("Cannot instantiate a View, which is an interface");
+    else if(!(this.display instanceof Function)) throw new Error("View class must implement display method.");
+  }
+}
+
+class CanvasView extends View {
+  constructor(scalingFactor) {
+    super();
+    this.scalingFactor_ = scalingFactor;
+    this.canvas_ = document.createElement("canvas");
+    document.body.appendChild(this.canvas_);
+    this.context_ = null; //______ don't understand
+  }
+  /**
+   * not sure how to implement here
+   */
+  /*
+  diplay(World) {
+    this.canvasWidth_ = this.scalingFactor_ * World.width;
+    this.canvasHeight_ = this.scalingFactor_ * World.height;
+  }
+  */
+}
+
 /*
 let bigSnake = new Snake();
 let littleSnake = new Snake();
@@ -269,12 +304,23 @@ littleSnake.move(3);
 littleSnake.turnLeft();
 littleSnake.move(4);
 console.log("Little Snake is at position (", littleSnake.position.posX, ",", littleSnake.position.posY, ")");
-*/
+
 let friendlySnake = new Snake();
 let gameTime = new WorldModel(friendlySnake);
 //gameTime.update(13);
 //gameTime.snake.turnLeft();
 //gameTime.update(7);
+//console.log("Our snake is at", gameTime.snake_.position);
+let bigBrain = new SnakeController(gameTime, friendlySnake);
+//console.log(bigBrain.snakePosition);
+//console.log(bigBrain.snakeDirection);
+*/
+let a = new Snake;
+let aWorld = new WorldModel(a);
+let bar = new SnakeController(aWorld, a);
+let foo = new AvoidWallsPlayer(bar);
+a.move(99);
+foo.makeTurn();
 //console.log("Our snake is at", gameTime.snake_.position);
 let bigBrain = new SnakeController(gameTime, friendlySnake);
 //console.log(bigBrain.snakePosition);
