@@ -14,6 +14,14 @@ describe("WorldModel", function() {
     let tWorld = new WorldModel(t);
     expect(tWorld.height).toBeDefined();
   });
+  it("has a workling setter for view", function() {
+    let a = new Snake;
+    let aWorld = new WorldModel(a);
+    expect(aWorld.view_).toBe(null);
+    let foo = new CanvasView(10);
+    aWorld.view = foo;
+    expect(aWorld.view_).toBeDefined();
+  });
   it("updates correctly", function() {
     let a = new Snake;
     let aWorld = new WorldModel(a);
