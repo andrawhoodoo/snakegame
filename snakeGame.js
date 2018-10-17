@@ -292,5 +292,4 @@ let gameTime = new WorldModel(friendlySnake);
 
 let FooView = new CanvasView(2);
 gameTime.view = FooView;
-
-
+gameTime.update(1);
