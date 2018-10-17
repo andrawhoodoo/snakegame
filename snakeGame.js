@@ -275,12 +275,12 @@ class CanvasView extends View {
     this.canvas_ = document.createElement("canvas");
     document.body.appendChild(this.canvas_);
     this.context_= this.canvas_.getContext("2d");
-    this.context_.fillStyle = "black";
   }
 
   display(World) {
     this.canvas_.width = this.scalingFactor_ * World.width;
     this.canvas_.height = this.scalingFactor_ * World.height;
+    this.context_.fillStyle = "orange";
     this.context_.fillRect(5, 10, this.scalingFactor_, this.scalingFactor_);
   }
 }
