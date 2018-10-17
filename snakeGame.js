@@ -288,7 +288,7 @@ class CanvasView extends View {
 }
 
 let friendlySnake = new Snake();
-let gameTime = new WorldModel(friendlySnake);
+let gameTime = new WorldModel(friendlySnake, 200, 200);
 
 let FooView = new CanvasView(2);
 gameTime.view = FooView;
