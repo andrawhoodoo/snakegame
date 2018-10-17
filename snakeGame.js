@@ -288,8 +288,8 @@ class CanvasView extends View {
 }
 
 let friendlySnake = new Snake();
-let gameTime = new WorldModel(friendlySnake, 200, 200);
+let gameTime = new WorldModel(friendlySnake, 42, 42);
 
-let FooView = new CanvasView(2);
+let FooView = new CanvasView(10);
 gameTime.view = FooView;
-gameTime.update(1);
+gameTime.update(0);
