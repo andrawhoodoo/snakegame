@@ -277,9 +277,7 @@ class CanvasView extends View {
     this.context_= this.canvas_.getContext("2d");
     this.context_.fillStyle = "black";
   }
-  /**
-   * not sure how to implement here
-   */
+
   display(World) {
     this.canvas_.width = this.scalingFactor_ * World.width;
     this.canvas_.height = this.scalingFactor_ * World.height;
