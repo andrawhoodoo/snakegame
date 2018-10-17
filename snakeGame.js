@@ -274,54 +274,23 @@ class CanvasView extends View {
     this.scalingFactor_ = scalingFactor;
     this.canvas_ = document.createElement("canvas");
     document.body.appendChild(this.canvas_);
-    this.context_ = null; //______ don't understand
+    this.context_= this.canvas_.getContext("2d");
+    this.context_.fillStyle = "black";
   }
   /**
    * not sure how to implement here
    */
-  /*
-  diplay(World) {
-    this.canvasWidth_ = this.scalingFactor_ * World.width;
-    this.canvasHeight_ = this.scalingFactor_ * World.height;
+  display(World) {
+    this.canvas_.width = this.scalingFactor_ * World.width;
+    this.canvas_.height = this.scalingFactor_ * World.height;
+    this.context_.fillRect(5, 10, this.scalingFactor_, this.scalingFactor_);
   }
-  */
 }
-
-/*
-let bigSnake = new Snake();
-let littleSnake = new Snake();
-console.log(bigSnake.position);
-
-bigSnake.move(7);
-console.log(bigSnake.position);
-bigSnake.turnLeft();
-bigSnake.move(5);
-console.log("Big Snake is at position (", bigSnake.position.posX, ",", bigSnake.position.posY, ")");
-
-littleSnake.turnRight();
-littleSnake.move(1);
-littleSnake.move(3);
-littleSnake.turnLeft();
-littleSnake.move(4);
-console.log("Little Snake is at position (", littleSnake.position.posX, ",", littleSnake.position.posY, ")");
 
 let friendlySnake = new Snake();
 let gameTime = new WorldModel(friendlySnake);
-//gameTime.update(13);
-//gameTime.snake.turnLeft();
-//gameTime.update(7);
-//console.log("Our snake is at", gameTime.snake_.position);
-let bigBrain = new SnakeController(gameTime, friendlySnake);
-//console.log(bigBrain.snakePosition);
-//console.log(bigBrain.snakeDirection);
-*/
-let a = new Snake;
-let aWorld = new WorldModel(a);
-let bar = new SnakeController(aWorld, a);
-let foo = new AvoidWallsPlayer(bar);
-a.move(99);
-foo.makeTurn();
-//console.log("Our snake is at", gameTime.snake_.position);
-let bigBrain = new SnakeController(gameTime, friendlySnake);
-//console.log(bigBrain.snakePosition);
-//console.log(bigBrain.snakeDirection);
+
+let FooView = new CanvasView(2);
+gameTime.view = FooView;
+
+
