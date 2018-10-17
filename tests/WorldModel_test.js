@@ -18,6 +18,7 @@ describe("WorldModel", function() {
     let a = new Snake;
     let aWorld = new WorldModel(a);
     aWorld.update(5);
-    expect(aWorld.snake.position).toBe("Point { x_: 5, y_: 0 }");
+    expect(aWorld.snake.position.posX).toBe(5);
+    expect(aWorld.snake.position.posY).toBe(0);
   });
 });
