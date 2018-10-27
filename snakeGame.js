@@ -324,15 +324,14 @@ class LRKeyInputHandler extends InputHandler {
     super();
     this.wasLeftArrowPushed_ = false;
     this.wasRightArrowPushed_ = false;
-    let eventHandler = event => {
-      if(event.key === "ArrowRight") {
-        this.wasRightArrowPushed_ = true;
-      }
-      else if(event.key === "ArrowLeft") {
-        this.wasLeftArrowPushed_ = true;
-      }
+  }
+  eventHandler(event) {
+    if(event.key === "ArrowRight") {
+      this.wasRightArrowPushed_ = true;
     }
-    document.getElementById("game").addEventListener("keydown", eventHandler);
+    else if(event.key === "ArrowLeft") {
+      this.wasLeftArrowPushed_ = true;
+    }
   }
   madeLeftMove() {
     return this.wasLeftArrowPushed_;
@@ -345,6 +344,9 @@ class LRKeyInputHandler extends InputHandler {
   }
   resetRightMove() {
     this.wasRightArrowPushed_ = false;
+  }
+  eventListener() {
+    document.getElementById("game").addEventListener("keydown", eventHandler);
   }
 }
 /** Class representing a Human Player of the snake game. */
@@ -362,11 +364,12 @@ class HumanPlayer extends Player {
    * turns the snake left or right using the HumanPlayer's SnakeController based on the InputHandler registering a left arrow keypress or a  right arrow keypress. If no keys are pressed, does nothing.
    */
   makeTurn() {
-    if(this.inputHandler_.madeLeftMove() === true) {
+    this.inputHandler_.eventListener();
+    if(this.inputHandler_.madeLeftMove === true) {
       this.sc_.turnSnakeLeft();
       this.inputHandler_.resetLeftMove();
     }
-    else if(this.inputHandler_.madeRightMove() === true) {
+    else if(this.inputHandler_.madeRightMove === true) {
       this.sc_.turnSnakeRight();
       this.inputHandler_.resetRightMove();
     }
@@ -404,7 +407,7 @@ class GameController {
   run() {
     var lastTime = 0;
     let updateFrame = milliseconds => {
-      if(!(this.player1_ === null)) this.player1_.makeTurn();
+      if(!(this.player1_ === null))this.player1_.makeTurn();
       if(!(this.player2_ === null))this.player2_.makeTurn();
       if((milliseconds - lastTime) > 50){
         this.world_.update(1);
@@ -420,8 +423,6 @@ let friendlySnake = new Snake();
 let gameTime = new WorldModel(friendlySnake, 42, 42);
 let FooView = new CanvasView(10);
 gameTime.view = FooView;
-//gameTime.update(0);
-//gameTime.update(50);
 let SlitherControl = new SnakeController(gameTime, friendlySnake);
 let KeyboardBrain = new LRKeyInputHandler;
 let Hooman = new HumanPlayer(SlitherControl, KeyboardBrain);
