@@ -324,14 +324,15 @@ class LRKeyInputHandler extends InputHandler {
     super();
     this.wasLeftArrowPushed_ = false;
     this.wasRightArrowPushed_ = false;
-  }
-  eventHandler(event) {
-    if(event.key === "ArrowRight") {
-      this.wasRightArrowPushed_ = true;
+    let eventHandler = event => {
+      if(event.key === "ArrowRight") {
+        this.wasRightArrowPushed_ = true;
+      }
+      else if(event.key === "ArrowLeft") {
+        this.wasLeftArrowPushed_ = true;
+      }
     }
-    else if(event.key === "ArrowLeft") {
-      this.wasLeftArrowPushed_ = true;
-    }
+    window.addEventListener("keydown", eventHandler);  
   }
   madeLeftMove() {
     return this.wasLeftArrowPushed_;
@@ -344,9 +345,6 @@ class LRKeyInputHandler extends InputHandler {
   }
   resetRightMove() {
     this.wasRightArrowPushed_ = false;
-  }
-  eventListener() {
-    document.getElementById("game").addEventListener("keydown", eventHandler);
   }
 }
 /** Class representing a Human Player of the snake game. */
@@ -364,12 +362,11 @@ class HumanPlayer extends Player {
    * turns the snake left or right using the HumanPlayer's SnakeController based on the InputHandler registering a left arrow keypress or a  right arrow keypress. If no keys are pressed, does nothing.
    */
   makeTurn() {
-    this.inputHandler_.eventListener();
-    if(this.inputHandler_.madeLeftMove === true) {
+    if(this.inputHandler_.madeLeftMove() == true) {
       this.sc_.turnSnakeLeft();
       this.inputHandler_.resetLeftMove();
     }
-    else if(this.inputHandler_.madeRightMove === true) {
+    else if(this.inputHandler_.madeRightMove() == true) {
       this.sc_.turnSnakeRight();
       this.inputHandler_.resetRightMove();
     }
