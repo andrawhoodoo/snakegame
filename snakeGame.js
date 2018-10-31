@@ -1,4 +1,4 @@
-/** Class representing a 2 dimensional point. */
+ /** Class representing a 2 dimensional point. */
 class Point {
   /**
    * Create a point.
@@ -21,6 +21,10 @@ class Point {
   get posY() {
     return this.y_;
   }
+  equals(p) {
+    if(p.posX == this.posX && p.posY == this.posY) return true;
+    else return false;
+  }
 }
 
 /** Class representing a Snake.*/
@@ -28,8 +32,9 @@ class Snake {
   /**
    * Create a snake.
    */
-  constructor() {
-    this.pos_ = new Point(0, 0);
+  constructor(startPosition, size) {
+    this.parts_ = [startPosition];
+    for(let index=1; index < (size - 1); index++) this.parts_.push(new Point(startPosition.posX, startPosition.posY + index));
     this.currentDir_ = "right";
   }
   /**
@@ -71,31 +76,43 @@ class Snake {
    * @param {int} steps - The amount of 'steps' along the grid to increase the snake's position by.
    */
   move(steps) {
+    for(let index = (this.parts_.length - 1); index > 0; index = index - 1) {
+      this.parts_[index] = this.parts_[index-1];
+    }
     if (this.currentDir_ === "right") {      
-      this.pos_ = new Point(this.position.posX + steps, this.position.posY);
+      this.parts_[0] = new Point(this.position.posX + steps, this.position.posY);
     }
 
     else if(this.currentDir_ === "left") {
-      this.pos_ = new Point(this.position.posX - steps, this.position.posY);
+      this.parts_[0] = new Point(this.position.posX - steps, this.position.posY);
     }
     else if(this.currentDir_ === "up") {
-      this.pos_ = new Point(this.position.posX, this.position.posY - steps);
+      this.parts_[0] = new Point(this.position.posX, this.position.posY - steps);
     }
     else if(this.currentDir_ === "down") {
-      this.pos_ = new Point(this.position.posX, this.position.posY + steps);
+      this.parts_[0] = new Point(this.position.posX, this.position.posY + steps);
     }
   }
   /**
    * @type {tuple}
    */
   get position() {
-    return this.pos_;
+    return this.parts_[0];
   }
   /**
-   * @type {tuple}
+   * @type {string}
    */
   get direction() {
     return this.currentDir_;
+  }
+  didCollide(s) {
+    if(s === this && this.parts_.slice(1).some(x => this.position.equals(x))) {
+      return true;
+    }
+    else if(s != this && s.parts_.some(x => this.position.equals(x))) {
+      return true;
+    }
+    else return false;
   }
 }
 
@@ -103,34 +120,42 @@ class Snake {
 class WorldModel {
   /**
    * Creates a world model and ensures that an instance of Snake class is passed. Also initializes a view property.
-   * @param {class} s - instance of snake class
    * @param {int} w - width of desired world view.  If no int passed, default to 100.
    * @param {int} h - height of desired world view. If no int passed, default to 100.
    */
-  constructor(s, w, h) {
-    if(s instanceof Snake) {
-      this.snake_ = s;
-    }
-    else throw new Error("Not given a valid Snake");
+  constructor(w, h) {
     this.width_ = w || 100;
     this.height_ = h || 100;
-    this.view_ = null;
+    this.views_ = [];
+    this.snakes_ = [];
   }
   /**
    * Moves the snake belonging to the WorldModel; updates the display of CanvasView if there is a paired CanvasView class with this WorldModel.
    * @param {int} steps - the input for the snake's move function.
    */
+
   update(steps) {
-    this.snake_.move(steps);
-    if(!(this.view_ == null)) {
-      this.view_.display(this);
+    var crashedSnakes = [];
+    this.snakes.forEach(x => x.move(steps));
+    if(!(this.views_ == [])) {
+      this.views_.forEach(x => x.display(this));
     }
+    this.snakes.forEach(x => {
+      for(let index = 0; index < this.snakes.length; index ++) {
+      if(x.didCollide(this.snakes[index]) && crashedSnakes.every(y => y != x)) crashedSnakes.push(x);
+      }
+    });
+    crashedSnakes.forEach(x => {
+      for(let index = 0; index < this.snakes.length; index ++) {
+      if(this.snakes[index] === x) this.snakes.splice(index, 1);
+      }
+    });
   }
   /**
    * @type {tuple}
    */
-  get snake() {
-    return this.snake_;
+  get snakes() {
+    return this.snakes_;
   }
   /**
    * @type {int}
@@ -144,13 +169,17 @@ class WorldModel {
   get height() {
     return this.height_;
   }
-  /**
-   * assigns ownership of a View to the WorldModel
-   * @param {class} newView - new view class you wish to assign
-   */
-  set view(newView) {
-    if(newView instanceof View) this.view_ = newView;
-    else throw new Error("must pass a valid View");
+  addSnake(s) {
+    if(s instanceof Snake) {
+      this.snakes_.push(s);
+    }
+    else throw new Error("Must be given a valid snake.");
+  }
+  addView(v) {
+    if(v instanceof View) {
+      this.views_.push(v);
+    }
+    else throw new Error("Must be given a valid view.");
   }
 }
 
@@ -298,7 +327,11 @@ class CanvasView extends View {
     this.canvas_.width = this.scalingFactor_ * world.width;
     this.canvas_.height = this.scalingFactor_ * world.height;
     this.context_.fillStyle = "orange";
-    this.context_.fillRect(world.snake.position.posX, world.snake.position.posY, this.scalingFactor_, this.scalingFactor_);
+    world.snakes.forEach(x => {
+      for(let index = 0; index < x.parts_.length; index++) {
+        this.context_.fillRect(x.parts_[index].posX, x.parts_[index].posY, this.scalingFactor_, this.scalingFactor_);
+      }
+    });
   }
 }
 
@@ -416,16 +449,23 @@ class GameController {
   }
 }
 
-let friendlySnake = new Snake();
-let gameTime = new WorldModel(friendlySnake, 42, 42);
+let foo = new Point(0, 0);
+let bar = new Point(0, 400);
+let friendlySnake = new Snake(foo, 50);
+let enemySnake = new Snake(bar, 20);
+let gameTime = new WorldModel(42, 42);
 let FooView = new CanvasView(10);
-gameTime.view = FooView;
+gameTime.addSnake(enemySnake);
+gameTime.addSnake(friendlySnake);
+gameTime.addView(FooView);
+let AIcontrol = new SnakeController(gameTime, enemySnake);
 let SlitherControl = new SnakeController(gameTime, friendlySnake);
 let KeyboardBrain = new LRKeyInputHandler;
 let Hooman = new HumanPlayer(SlitherControl, KeyboardBrain);
 let GameControl = new GameController(gameTime);
+let FakeHuman = new AvoidWallsPlayer(AIcontrol, 10);
 GameControl.player1 = Hooman;
-//let FakeHuman = new AvoidWallsPlayer(SlitherControl, 10);
-//GameControl.player1 = FakeHuman;
+GameControl.player2 = FakeHuman;
 GameControl.run();
+
 
