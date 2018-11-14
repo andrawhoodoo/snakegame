@@ -654,4 +654,10 @@ let Human2 = new HumanPlayer(EnemyControl, SecondBrain);
 GameControl.player1 = Hooman;
 //GameControl.player2 = FakeHuman;
 GameControl.player2 = Human2;
-GameControl.run();
+
+
+document.getElementById("start").onclick = function() {myFunction()};
+function myFunction() {
+  GameControl.run();
+  document.getElementById("start").remove();
+}
