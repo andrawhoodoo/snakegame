@@ -298,6 +298,39 @@ class LRKeyInputHandler extends InputHandler {
     this.wasRightArrowPushed_ = false;
   }
 }
+
+class ADKeyInputHandler extends InputHandler {
+  /**
+   * Create a new LRKeyInputHandler. Start listening for a keydown event. If event occurs, call eventHandler method.
+   */
+  constructor() {
+    super();
+    this.wasAPushed_ = false;
+    this.wasDPushed_ = false;
+    let eventHandler = event => {
+      if(event.keyCode === 68) {
+        this.wasDPushed_ = true;
+      }
+      else if(event.keyCode === 65) {
+        this.wasAPushed_ = true;
+      }
+    }
+    window.addEventListener("keydown", eventHandler);  
+  }
+  madeLeftMove() {
+    return this.wasAPushed_;
+  }
+  madeRightMove() {
+    return this.wasDPushed_;
+  }
+  resetLeftMove() {
+    this.wasAPushed_ = false;
+  }
+  resetRightMove() {
+    this.wasDPushed_ = false;
+  }
+}
+
 /** Class representing a Human Player of the snake game. */
 class HumanPlayer extends Player {
   /**
@@ -610,12 +643,15 @@ let FooView = new CanvasView(10);
 gameTime.addActor(enemySnake);
 gameTime.addActor(friendlySnake);
 gameTime.addView(FooView);
-let AIcontrol = new SnakeController(gameTime, enemySnake);
+let EnemyControl = new SnakeController(gameTime, enemySnake);
 let SlitherControl = new SnakeController(gameTime, friendlySnake);
 let KeyboardBrain = new LRKeyInputHandler;
+let SecondBrain = new ADKeyInputHandler;
 let Hooman = new HumanPlayer(SlitherControl, KeyboardBrain);
 let GameControl = new GameController(gameTime);
-let FakeHuman = new AvoidWallsPlayer(AIcontrol, 10);
+let Human2 = new HumanPlayer(EnemyControl, SecondBrain);
+//let FakeHuman = new AvoidWallsPlayer(AIcontrol, 10);
 GameControl.player1 = Hooman;
-GameControl.player2 = FakeHuman;
+//GameControl.player2 = FakeHuman;
+GameControl.player2 = Human2;
 GameControl.run();
