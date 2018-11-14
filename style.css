@@ -1,3 +1,13 @@
+body {
+  background-color: cornsilk;
+}
+
 canvas {
   background-color: black;
+}
+
+h1 {
+  color:crimson;
+  text-decoration: underline black;
+  text-align: center;
 }
