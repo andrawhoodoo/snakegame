@@ -27,95 +27,6 @@ class Point {
   }
 }
 
-/** Class representing a Snake.*/
-class Snake {
-  /**
-   * Create a snake.
-   */
-  constructor(startPosition, size) {
-    this.parts_ = [startPosition];
-    for(let index=1; index < (size - 1); index++) this.parts_.push(new Point(startPosition.posX, startPosition.posY + index));
-    this.currentDir_ = "right";
-  }
-  /**
-   * Changes the direction of the Snake by making a left turn relative to its current direction.
-   */
-  turnLeft() {
-    if (this.currentDir_ === "right") {
-      this.currentDir_ = "up";
-    }
-    else if(this.currentDir_ === "up") {
-      this.currentDir_ = "left";
-    }
-    else if(this.currentDir_ === "left") {
-      this.currentDir_ = "down";
-    }
-    else if(this.currentDir_ === "down") {
-      this.currentDir_ = "right";
-    }
-  }
-  /**
-   * Changes the direction of the Snake by making a right turn relative to its current direction.
-   */
-  turnRight() {
-    if (this.currentDir_ === "right") {
-      this.currentDir_ = "down";
-    }
-    else if(this.currentDir_ === "up") {
-      this.currentDir_ = "right";
-    }
-    else if(this.currentDir_ === "left") {
-      this.currentDir_ = "up";
-    }
-    else if(this.currentDir_ === "down") {
-      this.currentDir_ = "left";
-    }
-  }
-  /**
-   * Moves the Snake's position forward along its current direction.
-   * @param {int} steps - The amount of 'steps' along the grid to increase the snake's position by.
-   */
-  move(steps) {
-    for(let index = (this.parts_.length - 1); index > 0; index = index - 1) {
-      this.parts_[index] = this.parts_[index-1];
-    }
-    if (this.currentDir_ === "right") {      
-      this.parts_[0] = new Point(this.position.posX + steps, this.position.posY);
-    }
-
-    else if(this.currentDir_ === "left") {
-      this.parts_[0] = new Point(this.position.posX - steps, this.position.posY);
-    }
-    else if(this.currentDir_ === "up") {
-      this.parts_[0] = new Point(this.position.posX, this.position.posY - steps);
-    }
-    else if(this.currentDir_ === "down") {
-      this.parts_[0] = new Point(this.position.posX, this.position.posY + steps);
-    }
-  }
-  /**
-   * @type {tuple}
-   */
-  get position() {
-    return this.parts_[0];
-  }
-  /**
-   * @type {string}
-   */
-  get direction() {
-    return this.currentDir_;
-  }
-  didCollide(s) {
-    if(s === this && this.parts_.slice(1).some(x => this.position.equals(x))) {
-      return true;
-    }
-    else if(s != this && s.parts_.some(x => this.position.equals(x))) {
-      return true;
-    }
-    else return false;
-  }
-}
-
 /** Model Class representing a virtual world for a Snake. */
 class WorldModel {
   /**
@@ -123,11 +34,12 @@ class WorldModel {
    * @param {int} w - width of desired world view.  If no int passed, default to 100.
    * @param {int} h - height of desired world view. If no int passed, default to 100.
    */
-  constructor(w, h) {
+  constructor(aca, w, h) {
+    this.aca_ = aca;
     this.width_ = w || 100;
     this.height_ = h || 100;
     this.views_ = [];
-    this.snakes_ = [];
+    this.actors_ = [];
   }
   /**
    * Moves the snake belonging to the WorldModel; updates the display of CanvasView if there is a paired CanvasView class with this WorldModel.
@@ -135,27 +47,30 @@ class WorldModel {
    */
 
   update(steps) {
-    var crashedSnakes = [];
-    this.snakes.forEach(x => x.move(steps));
+    this.actors_.forEach(x => {
+      if(x.type === "Snake") x.move(steps);
+    });
     if(!(this.views_ == [])) {
       this.views_.forEach(x => x.display(this));
     }
-    this.snakes.forEach(x => {
-      for(let index = 0; index < this.snakes.length; index ++) {
-      if(x.didCollide(this.snakes[index]) && crashedSnakes.every(y => y != x)) crashedSnakes.push(x);
+    this.actors_.forEach(x => {
+      for(let index = 0; index < this.actors_.length; index ++) {
+        if(x.type === "Snake" && x.didCollide(this.actors_[index])) {
+          this.aca_.applyCollisionAction(x, this.actors_[index]);
+        }
       }
     });
-    crashedSnakes.forEach(x => {
-      for(let index = 0; index < this.snakes.length; index ++) {
-      if(this.snakes[index] === x) this.snakes.splice(index, 1);
+    this.actors_.forEach(x => {
+      for(let index = 0; index < this.actors_.length; index ++) {
+      if(!(this.actors_[index].isActive)) this.actors_.splice(index, 1);
       }
     });
   }
   /**
    * @type {tuple}
    */
-  get snakes() {
-    return this.snakes_;
+  get actors() {
+    return new ArrayIterator(this.actors_);
   }
   /**
    * @type {int}
@@ -169,11 +84,11 @@ class WorldModel {
   get height() {
     return this.height_;
   }
-  addSnake(s) {
-    if(s instanceof Snake) {
-      this.snakes_.push(s);
+  addActor(a) {
+    if(a instanceof Actor) {
+      this.actors_.push(a);
     }
-    else throw new Error("Must be given a valid snake.");
+    else throw new Error("Must be given a valid actor.");
   }
   addView(v) {
     if(v instanceof View) {
@@ -326,11 +241,14 @@ class CanvasView extends View {
   display(world) {
     this.canvas_.width = this.scalingFactor_ * world.width;
     this.canvas_.height = this.scalingFactor_ * world.height;
-    this.context_.fillStyle = "orange";
-    world.snakes.forEach(x => {
-      for(let index = 0; index < x.parts_.length; index++) {
-        this.context_.fillRect(x.parts_[index].posX, x.parts_[index].posY, this.scalingFactor_, this.scalingFactor_);
+    world.actors.forEach(x => {
+      if(x.type === "Snake") {
+        this.context_.fillStyle = x.color; 
+        for(let index = 0; index < x.parts_.length; index++) {
+          this.context_.fillRect(x.parts_[index].posX, x.parts_[index].posY, this.scalingFactor_, this.scalingFactor_);
+        }
       }
+      else this.context_.fillRect(x.position.posX, x.position.posY, this.scalingFactor_, this.scalingFactor_);
     });
   }
 }
@@ -439,9 +357,9 @@ class GameController {
     let updateFrame = milliseconds => {
       if(!(this.player1_ === null))this.player1_.makeTurn();
       if(!(this.player2_ === null))this.player2_.makeTurn();
-      if((milliseconds - lastTime) > 50){
+      if((milliseconds - lastTime) > 25){
         this.world_.update(1);
-        lastTime = lastTime + 50;
+        lastTime = lastTime + 25;
       }
       requestAnimationFrame(updateFrame);
     }
@@ -449,14 +367,248 @@ class GameController {
   }
 }
 
+class Actor {
+  constructor() {
+    if(this.constructor===Actor) throw new Error("Cannot instantiate an Actor which is an interface.");
+    else if(!(this.update instanceof Function)) throw new Error("Actor must have an update method.");
+  }
+}
+
+class Collidable extends Actor {
+  constructor() {
+    super();
+    if(this.constructor === Collidable) throw new Error("Cannot instantiate a Collidable which is an interface.");
+    else if(!(this.didCollide instanceof Function)) throw new Error("Collidable must have a didCollide method.");
+  }
+}
+
+class Food extends Actor {
+  constructor(x, y) {
+    super();
+    this.position_ = new Point(x, y);
+    this.isActive_ = true;
+  }
+  eat() {
+    this.isActive_ = false;
+  }
+  get position() {
+    return this.position_;
+  }
+  get isActive() {
+    return this.isActive_;
+  }
+  get type() {
+    return "Food";
+  }
+  update() {
+
+  }
+}
+
+class CollisionHandler {
+  constructor() {
+    if(this.constructor === CollisionHandler) throw new Error("Cannot instantiate a CollisionHandler which is an Interface.");
+    else if(!(this.applyAction instanceof Function)) throw new Error("Collision Handler must have an applyAction method.");
+  }
+}
+
+class SnakeFoodCollisionHandler extends CollisionHandler {
+  constructor() {
+    super();
+  }
+  applyAction(snake, food) {
+    food.eat();
+    snake.grow();
+  }
+}
+
+class SnakeSnakeCollisionHandler extends CollisionHandler {
+  constructor() {
+    super();
+  }
+  applyAction(snake1, snake2) {
+    snake1.die();
+  }
+}
+
+class ActorCollisionHandler {
+  constructor() {
+    this.pairs_ = new Map();
+  }
+  toKey_(colliderType, collidedType) {
+    return colliderType + ", " + collidedType;
+  }
+  addCollisionAction(colliderType, collidedType, actionApplicator) {
+    this.pairs_.set(this.toKey_(colliderType, collidedType), actionApplicator);
+  }
+  hasCollisionAction(colliderType, collidedType) {
+    return this.pairs_.has(this.toKey_(colliderType, collidedType));
+  }
+  applyCollisionAction(collider, collided) {
+    if(this.hasCollisionAction(collider.type, collided.type)) {
+      this.pairs_.get(this.toKey_(collider.type, collided.type)).applyAction(collider, collided);
+    }
+  }
+}
+
+class ArrayIterator {
+  constructor(arr) {
+    this.arr_ = arr;
+    this.index_ = 0;
+  }
+  next() {
+    let ind = this.index_++;
+    let done = (ind === this.arr_.length)
+    let value = (done) ? undefined : this.arr_[ind];
+    return {value: value, done: done};
+  }
+  forEach(f) {
+    this.arr_.forEach(x => f(x));
+  }
+}
+
+class Snake extends Collidable {
+  /**
+   * Create a snake.
+   * @param {class Point} startPosition - the starting position of the head of the Snake.
+   * @param {int} size - the desired size of the Snake.
+   */
+  constructor(startPosition, size, color) {
+    super();
+    this.isActive_ = true;
+    this.color_ = color || "orange";
+    this.parts_ = [startPosition];
+    for(let index=1; index < (size - 1); index++) this.parts_.push(new Point(startPosition.posX, startPosition.posY + index));
+    this.currentDir_ = "right";
+  }
+  /**
+   * Changes the direction of the Snake by making a left turn relative to its current direction.
+   */
+  turnLeft() {
+    if (this.currentDir_ === "right") {
+      this.currentDir_ = "up";
+    }
+    else if(this.currentDir_ === "up") {
+      this.currentDir_ = "left";
+    }
+    else if(this.currentDir_ === "left") {
+      this.currentDir_ = "down";
+    }
+    else if(this.currentDir_ === "down") {
+      this.currentDir_ = "right";
+    }
+  }
+  /**
+   * Changes the direction of the Snake by making a right turn relative to its current direction.
+   */
+  turnRight() {
+    if (this.currentDir_ === "right") {
+      this.currentDir_ = "down";
+    }
+    else if(this.currentDir_ === "up") {
+      this.currentDir_ = "right";
+    }
+    else if(this.currentDir_ === "left") {
+      this.currentDir_ = "up";
+    }
+    else if(this.currentDir_ === "down") {
+      this.currentDir_ = "left";
+    }
+  }
+  /**
+   * Moves the Snake's head position forward along its current direction. Moves each part of the tail "up" to the previous position of the tail part "above" it.
+   * @param {int} steps - The amount of 'steps' along the grid to increase the snake's position by.
+   */
+  move(steps) {
+    for(let index = (this.parts_.length - 1); index > 0; index = index - 1) {
+      this.parts_[index] = this.parts_[index-1];
+    }
+    if (this.currentDir_ === "right") {      
+      this.parts_[0] = new Point(this.position.posX + steps, this.position.posY);
+    }
+
+    else if(this.currentDir_ === "left") {
+      this.parts_[0] = new Point(this.position.posX - steps, this.position.posY);
+    }
+    else if(this.currentDir_ === "up") {
+      this.parts_[0] = new Point(this.position.posX, this.position.posY - steps);
+    }
+    else if(this.currentDir_ === "down") {
+      this.parts_[0] = new Point(this.position.posX, this.position.posY + steps);
+    }
+  }
+  /**
+   * @type {tuple}
+   */
+  get position() {
+    return this.parts_[0];
+  }
+  /**
+   * @type {string}
+   */
+  get direction() {
+    return this.currentDir_;
+  }
+  didCollide(s) {
+    if(s instanceof Snake) {  
+      if(s === this && this.parts_.slice(1).some(x => this.position.equals(x))) {
+        return true;
+      }
+      else if(s != this && s.parts_.some(x => this.position.equals(x))) {
+        return true;
+      }
+      else return false;
+    }
+    else {
+      if(this.position.equals(s.position)) return true;
+      else return false;
+    }
+  }
+  update(steps) {
+    this.move(steps);
+  }
+  die() {
+    this.isActive_ = false;
+  }
+  get isActive() {
+    return this.isActive_;
+  }
+  grow() {
+    if(this.direction === "left") {
+      this.parts_.push(new Point(this.parts_[this.parts.length - 1].posX + 1, this.parts_[this.parts.length - 1].posY));
+    }
+    else if(this.direction === "right") {
+      this.parts_.push(new Point(this.parts_[this.parts.length - 1].posX - 1, this.parts_[this.parts.length - 1].posY));
+    }
+    else if(this.direction === "down") {
+      this.parts_.push(new Point(this.parts_[this.parts.length - 1].posX, this.parts_[this.parts.length - 1].posY - 1));
+    }
+    else {
+      this.parts_.push(new Point(this.parts_[this.parts.length - 1].posX, this.parts_[this.parts.length - 1].posY + 1));
+    }
+  }
+  get type() {
+    return "Snake";
+  }
+  get color() {
+    return this.color_;
+  }
+}
+
+
+let SSCH = new SnakeSnakeCollisionHandler;
+let SFCH = new SnakeFoodCollisionHandler;
+let Handler = new ActorCollisionHandler;
+Handler.addCollisionAction("Snake", "Food", SFCH);
+Handler.addCollisionAction("Snake", "Snake", SSCH);
 let foo = new Point(0, 0);
 let bar = new Point(0, 400);
-let friendlySnake = new Snake(foo, 50);
-let enemySnake = new Snake(bar, 20);
-let gameTime = new WorldModel(42, 42);
+let friendlySnake = new Snake(foo, 100, "red");
+let enemySnake = new Snake(bar, 100, "blue");
+let gameTime = new WorldModel(Handler, 42, 42);
 let FooView = new CanvasView(10);
-gameTime.addSnake(enemySnake);
-gameTime.addSnake(friendlySnake);
+gameTime.addActor(enemySnake);
+gameTime.addActor(friendlySnake);
 gameTime.addView(FooView);
 let AIcontrol = new SnakeController(gameTime, enemySnake);
 let SlitherControl = new SnakeController(gameTime, friendlySnake);
@@ -467,5 +619,3 @@ let FakeHuman = new AvoidWallsPlayer(AIcontrol, 10);
 GameControl.player1 = Hooman;
 GameControl.player2 = FakeHuman;
 GameControl.run();
-
-
