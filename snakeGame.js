@@ -47,6 +47,11 @@ class WorldModel {
    */
 
   update(steps) {
+    var foodParticles = this.actors_.filter(x => x.type === "Food");
+    if(foodParticles.length === 0) {
+      let pieceOfFood = new Food(Math.floor((this.width_)*Math.random()), Math.floor((this.height_)*Math.random()))
+      this.addActor(pieceOfFood);
+    }
     this.actors_.forEach(x => {
       if(x.type === "Snake") x.move(steps);
     });
@@ -95,6 +100,11 @@ class WorldModel {
       this.views_.push(v);
     }
     else throw new Error("Must be given a valid view.");
+  }
+  reset() {
+    this.views_.forEach(x => x.dispose());
+    this.views_ = [];
+    this.actors_ = [];
   }
 }
 
@@ -151,6 +161,9 @@ class SnakeController {
   get worldWidth() {
     return this.snakeWorld_.width;
   }
+  get isSnakeActive() {
+    return this.slitherer_.isActive;
+  }
 }
 
 /** Abstract base class that ensures any object of type "Player" has the ability to make the snake turn. */
@@ -164,6 +177,9 @@ class Player {
     else this.sc_ = snakeController;
     if(this.constructor === Player) throw new Error("Cannot instantiate a Player, which is an abstract base class");
     else if(!(this.makeTurn instanceof Function)) throw new Error("Base class must implement makeTurn method.");
+  }
+  isActive() {
+    return this.sc_.isSnakeActive;
   }
 }
 
@@ -217,6 +233,7 @@ class View {
   constructor() {
     if(this.constructor === View) throw new Error("Cannot instantiate a View, which is an interface");
     else if(!(this.display instanceof Function)) throw new Error("View class must implement display method.");
+    else if(!(this.dispose instanceof Function)) throw new Error("View class must implement dispose method.");
   }
 }
 
@@ -248,8 +265,14 @@ class CanvasView extends View {
           this.context_.fillRect(x.parts_[index].posX, x.parts_[index].posY, this.scalingFactor_, this.scalingFactor_);
         }
       }
-      else this.context_.fillRect(x.position.posX, x.position.posY, this.scalingFactor_, this.scalingFactor_);
+      else {
+        this.context_.fillStyle = "purple";
+        this.context_.fillRect(x.position.posX*this.scalingFactor_, x.position.posY*this.scalingFactor_, this.scalingFactor_, this.scalingFactor_);
+      }
     });
+  }
+  dispose() {
+    document.body.removeChild(this.canvas_);
   }
 }
 
@@ -266,70 +289,63 @@ class InputHandler {
   }
 }
 
-/** Class representing an event handler for left and right arrow key inputs. Inherits from the InputHandler interface. */
-class LRKeyInputHandler extends InputHandler {
-  /**
-   * Create a new LRKeyInputHandler. Start listening for a keydown event. If event occurs, call eventHandler method.
-   */
+class KeyInputHandler extends InputHandler {
   constructor() {
     super();
-    this.wasLeftArrowPushed_ = false;
-    this.wasRightArrowPushed_ = false;
-    let eventHandler = event => {
-      if(event.key === "ArrowRight") {
-        this.wasRightArrowPushed_ = true;
-      }
-      else if(event.key === "ArrowLeft") {
-        this.wasLeftArrowPushed_ = true;
-      }
-    }
-    window.addEventListener("keydown", eventHandler);  
+    this.wasLeftPushed_ = false;
+    this.wasRightPushed_ = false;
   }
   madeLeftMove() {
-    return this.wasLeftArrowPushed_;
+    return this.wasLeftPushed_;
   }
   madeRightMove() {
-    return this.wasRightArrowPushed_;
+    return this.wasRightPushed_;
   }
   resetLeftMove() {
-    this.wasLeftArrowPushed_ = false;
+    this.wasLeftPushed_ = false;
   }
   resetRightMove() {
-    this.wasRightArrowPushed_ = false;
+    this.wasRightPushed_ = false;
   }
 }
 
-class ADKeyInputHandler extends InputHandler {
+/** Class representing an event handler for left and right arrow key inputs. Inherits from the InputHandler interface. */
+class LRKeyInputHandler extends KeyInputHandler {
   /**
    * Create a new LRKeyInputHandler. Start listening for a keydown event. If event occurs, call eventHandler method.
    */
   constructor() {
     super();
-    this.wasAPushed_ = false;
-    this.wasDPushed_ = false;
     let eventHandler = event => {
-      if(event.keyCode === 68) {
-        this.wasDPushed_ = true;
+      if(event.key === "ArrowRight") {
+        this.wasRightPushed_ = true;
       }
-      else if(event.keyCode === 65) {
-        this.wasAPushed_ = true;
+      else if(event.key === "ArrowLeft") {
+        this.wasLeftPushed_ = true;
       }
     }
     window.addEventListener("keydown", eventHandler);  
   }
-  madeLeftMove() {
-    return this.wasAPushed_;
-  }
-  madeRightMove() {
-    return this.wasDPushed_;
-  }
-  resetLeftMove() {
-    this.wasAPushed_ = false;
-  }
-  resetRightMove() {
-    this.wasDPushed_ = false;
+}
+
+class ADKeyInputHandler extends KeyInputHandler {
+  /**
+   * Create a new ADKeyInputHandler. Start listening for a keydown event. If event occurs, call eventHandler method.
+   */
+  constructor() {
+    super();
+    let eventHandler = event => {
+      if(event.keyCode === 68) {
+        this.wasRightPushed_ = true;
+      }
+      else if(event.keyCode === 65) {
+        this.wasLeftPushed_ = true;
+      }
+    }
+    window.addEventListener("keydown", eventHandler);  
   }
 }
+
 
 /** Class representing a Human Player of the snake game. */
 class HumanPlayer extends Player {
@@ -357,48 +373,98 @@ class HumanPlayer extends Player {
   }
 }
 
+class WorldLoader {
+  readData(levelData, w) {
+    levelData.forEach((item, index) => item.split("").forEach((a, x) => {
+      if(a === "f") w.addActor(new Food(x, index))
+    }));
+  }
+}
+
 /** Class representing a context for the Snake Game: the World Model and Players that are in existence. */
 class GameController {
   /**
    * Create a GameController.
    * @param {class} world - The WorldModel you wish to use.
    */
-  constructor(world) {
-    this.world_ = world;
-    this.player1_ = null;
-    this.player2_ = null;
+  constructor(g) {
+    this.game_ = g;
+    /** Manage potential collisions */
+    let Handler = new ActorCollisionHandler;
+    let SFCH = new SnakeFoodCollisionHandler;
+    Handler.addCollisionAction("Snake", "Food", SFCH);
+    let SSCH = new SnakeSnakeCollisionHandler;
+    Handler.addCollisionAction("Snake", "Snake", SSCH);
+    this.world_ = new WorldModel(Handler, 42, 42);
+    this.players_ = [];
+  }
+  init(data) {
+    let arr = [new LRKeyInputHandler, new ADKeyInputHandler];
+    for(let i=0; i < (data.numOfHumanPlayers); i++) {
+      let p = i*20;
+      let foo = new Point(p, p);
+      let snek = new Snake(foo, 50);
+      let sc = new SnakeController(this.world_, snek);
+      let player = new HumanPlayer(sc, arr[i]);
+      this.player = player;
+    }
+    for(let i=0; i < (data.numOfAIPlayers); i++) {
+      let p = (i*20) + 40;
+      let foo = new Point(p, p);
+      let snek = new Snake(foo, 50);
+      let sc = new SnakeController(this.world_, snek);
+      let player = new AvoidWallsPlayer(sc, 10);
+      this.player = player;
+    }
+    let loadEmUp = new WorldLoader();
+    let string1 = "                        f  f f   f      f";
+    let string2 = "                                   f  f  ";
+    let string3 = "                                         ";
+    let string4 = "                  f      f               ";
+    let myArr = [string1, string2, string3, string4];
+    loadEmUp.readData(myArr, this.world_);
+    this.world_.addView(new CanvasView(10));
+    this.run();
   }
   /**
    * Sets player 1 to an instance of a Player Class 'p'.
    * @param {class} p - the Player class you wish to use.
    */
-  set player1(p) {
-    if(p instanceof Player) this.player1_ = p;
+  set player(p) {
+    if(p instanceof Player) {
+      this.players_.push(p);
+    }
     else throw new Error("Must provide a valid player.");
   }
-  /**
-   * Sets player 2 to an instance of a Player Class 'p'.
-   * @param {class} p - the Player class you wish to use.
-   */
-  set player2(p) {
-    if(p instanceof Player) this.player2_ = p;
-    else throw new Error("Must provide a valid player.");
-  }
-  
   run() {
     var lastTime = 0;
     let updateFrame = milliseconds => {
-      if(!(this.player1_ === null))this.player1_.makeTurn();
-      if(!(this.player2_ === null))this.player2_.makeTurn();
+      this.players_.forEach(x => x.makeTurn());
       if((milliseconds - lastTime) > 25){
         this.world_.update(1);
         lastTime = lastTime + 25;
       }
+      if(this.players_.length > 0) {
+        requestAnimationFrame(updateFrame);
+      }
+      else {
+        this.players_ = [];
+        this.world_.reset();
+        this.game_.switchContext();
+      }
+    }
+    if(this.players_.length > 1) {
       requestAnimationFrame(updateFrame);
     }
-    requestAnimationFrame(updateFrame);
+    else {
+      this.players_ = [];
+      this.world_.reset();
+      this.game_.switchContext();
+    }
   }
 }
+
+
 
 class Actor {
   constructor() {
@@ -628,36 +694,50 @@ class Snake extends Collidable {
   }
 }
 
-
-let SSCH = new SnakeSnakeCollisionHandler;
-let SFCH = new SnakeFoodCollisionHandler;
-let Handler = new ActorCollisionHandler;
-Handler.addCollisionAction("Snake", "Food", SFCH);
-Handler.addCollisionAction("Snake", "Snake", SSCH);
-let foo = new Point(0, 0);
-let bar = new Point(0, 400);
-let friendlySnake = new Snake(foo, 100, "red");
-let enemySnake = new Snake(bar, 100, "blue");
-let gameTime = new WorldModel(Handler, 42, 42);
-let FooView = new CanvasView(10);
-gameTime.addActor(enemySnake);
-gameTime.addActor(friendlySnake);
-gameTime.addView(FooView);
-let EnemyControl = new SnakeController(gameTime, enemySnake);
-let SlitherControl = new SnakeController(gameTime, friendlySnake);
-let KeyboardBrain = new LRKeyInputHandler;
-let SecondBrain = new ADKeyInputHandler;
-let Hooman = new HumanPlayer(SlitherControl, KeyboardBrain);
-let GameControl = new GameController(gameTime);
-let Human2 = new HumanPlayer(EnemyControl, SecondBrain);
-//let FakeHuman = new AvoidWallsPlayer(AIcontrol, 10);
-GameControl.player1 = Hooman;
-//GameControl.player2 = FakeHuman;
-GameControl.player2 = Human2;
-
-
-document.getElementById("start").onclick = function() {myFunction()};
-function myFunction() {
-  GameControl.run();
-  document.getElementById("start").remove();
+class MainMenuController {
+  constructor(game) {
+    this.game_ = game;
+    this.playGameButton_ = document.createElement("button");
+    this.humanPlayersInput_ = document.createElement("input");
+    this.humanPlayersInput_.placeholder = "Enter number of Human players";
+    this.aiPlayersInput_ = document.createElement("input");
+    this.aiPlayersInput_.placeholder = "Enter number of AI players";
+    this.playGameButton_.appendChild(document.createTextNode("Start Game!"));  
+    this.playGameButton_.addEventListener("click", this.switchContext_.bind(this));
+  }
+  init(data) {
+    document.getElementById("game-area").appendChild(this.humanPlayersInput_);
+    document.getElementById("game-area").appendChild(this.aiPlayersInput_);
+    document.getElementById("game-area").appendChild(this.playGameButton_);
+  }
+  switchContext_() {
+    document.getElementById("game-area").removeChild(this.playGameButton_);
+    document.getElementById("game-area").removeChild(this.humanPlayersInput_);
+    document.getElementById("game-area").removeChild(this.aiPlayersInput_);
+    this.game_.switchContext({numOfHumanPlayers: parseInt(this.humanPlayersInput_.value), numOfAIPlayers: parseInt(this.aiPlayersInput_.value)});
+  }
 }
+
+class Game {
+  constructor () {
+    this.contextSwitches_ = new Map();
+    this.contextSwitches_.set("Start", "Game");
+    this.contextSwitches_.set("Game", "Start");
+    this.controllers_ = new Map();
+    this.controllers_.set("Start", new MainMenuController(this));
+    this.controllers_.set("Game", new GameController(this));
+    this.currentContext_ = "Start";
+  }
+  switchContext(data) {
+    this.currentContext_ = this.contextSwitches_.get(this.currentContext_);
+    this.controllers_.get(this.currentContext_).init(data);
+  }
+  run(data) {
+    this.controllers_.get(this.currentContext_).init(data);
+  }
+}
+
+let hereWeGo = new Game();
+hereWeGo.run();
+
+
