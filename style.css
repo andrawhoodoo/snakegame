@@ -1,13 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-  background-color: cornsilk;
+  background-color: #666;
 }
 
 canvas {
-  background-color: black;
+  background-color: #fff;
 }
 
 h1 {
-  color:crimson;
-  text-decoration: underline black;
+  color: #fff;
   text-align: center;
+  padding-top: 1em;
+}
+
+header {
+  background-color: #333;
+  height: 100px;
+}
+
+#game-area {
+  width: 80%;
+  background-color: #333;
+  margin-left: 10%;
+  margin-top: 20%;
+  text-align: center;
+  padding: 10px;
 }
