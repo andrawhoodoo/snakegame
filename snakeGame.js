@@ -55,9 +55,6 @@ class WorldModel {
     this.actors_.forEach(x => {
       if(x.type === "Snake") x.move(steps);
     });
-    if(!(this.views_ == [])) {
-      this.views_.forEach(x => x.display(this));
-    }
     this.actors_.forEach(x => {
       for(let index = 0; index < this.actors_.length; index ++) {
         if(x.type === "Snake" && x.didCollide(this.actors_[index])) {
@@ -70,6 +67,9 @@ class WorldModel {
       if(!(this.actors_[index].isActive)) this.actors_.splice(index, 1);
       }
     });
+    if(!(this.views_ == [])) {
+      this.views_.forEach(x => x.display(this));
+    }
   }
   /**
    * @type {tuple}
@@ -88,6 +88,9 @@ class WorldModel {
    */
   get height() {
     return this.height_;
+  }
+  get view() {
+    return this.views_[0];
   }
   addActor(a) {
     if(a instanceof Actor) {
@@ -256,13 +259,13 @@ class CanvasView extends View {
    * @param {class} World - the WorldModel class in which our Snake class lives, i.e. the WorldModel we want to display.
    */
   display(world) {
-    this.canvas_.width = this.scalingFactor_ * world.width;
-    this.canvas_.height = this.scalingFactor_ * world.height;
+    this.canvas_.width = this.scalingFactor_*world.width;
+    this.canvas_.height = this.scalingFactor_*world.height;
     world.actors.forEach(x => {
       if(x.type === "Snake") {
         this.context_.fillStyle = x.color; 
         for(let index = 0; index < x.parts_.length; index++) {
-          this.context_.fillRect(x.parts_[index].posX, x.parts_[index].posY, this.scalingFactor_, this.scalingFactor_);
+          this.context_.fillRect(x.parts_[index].posX*this.scalingFactor_, x.parts_[index].posY*this.scalingFactor_, this.scalingFactor_, this.scalingFactor_);
         }
       }
       else {
@@ -376,7 +379,7 @@ class HumanPlayer extends Player {
 class WorldLoader {
   readData(levelData, w) {
     levelData.forEach((item, index) => item.split("").forEach((a, x) => {
-      if(a === "f") w.addActor(new Food(x, index))
+      if(a === "f") w.addActor(new Food(x, index));
     }));
   }
 }
@@ -400,28 +403,62 @@ class GameController {
   }
   init(data) {
     let arr = [new LRKeyInputHandler, new ADKeyInputHandler];
-    for(let i=0; i < (data.numOfHumanPlayers); i++) {
-      let p = i*20;
-      let foo = new Point(p, p);
-      let snek = new Snake(foo, 50);
-      let sc = new SnakeController(this.world_, snek);
-      let player = new HumanPlayer(sc, arr[i]);
-      this.player = player;
+    let myCols = ["red", "blue"];
+    let compCols = ["green", "black", "yellow"]
+    if(data.numOfHumanPlayers !== 0) {
+      for(let i=0; i < (data.numOfHumanPlayers); i++) {
+        let p = i*20;
+        let foo = new Point(p, p);
+        let snek = new Snake(foo, 5, myCols[i]);
+        let sc = new SnakeController(this.world_, snek);
+        let player = new HumanPlayer(sc, arr[i]);
+        this.player = player;
+        this.world_.addActor(snek);
+      }
     }
-    for(let i=0; i < (data.numOfAIPlayers); i++) {
-      let p = (i*20) + 40;
-      let foo = new Point(p, p);
-      let snek = new Snake(foo, 50);
-      let sc = new SnakeController(this.world_, snek);
-      let player = new AvoidWallsPlayer(sc, 10);
-      this.player = player;
+    if(data.numOfAIPlayers !== 0) {
+      for(let i=0; i < (data.numOfAIPlayers); i++) {
+        let p = (i*20) + 40;
+        let foo = new Point(p, p);
+        let snek = new Snake(foo, 5, compCols[i]);
+        let sc = new SnakeController(this.world_, snek);
+        let player = new AvoidWallsPlayer(sc, 1);
+        this.player = player;
+        this.world_.addActor(snek);
+      }
     }
     let loadEmUp = new WorldLoader();
-    let string1 = "                        f  f f   f      f";
-    let string2 = "                                   f  f  ";
+    let string1 = "fffffffffff";
+    let string2 = "                                         ";
     let string3 = "                                         ";
-    let string4 = "                  f      f               ";
-    let myArr = [string1, string2, string3, string4];
+    let string4 = "                         f               ";
+    let string5 = "           f                             ";
+    let string6 = "                                         ";
+    let string7 = "                                         ";
+    let string8 = "                                         ";
+    let string9 = "             f                           ";
+    let string0 = "                                         ";
+    let stringA = "                                  f      ";
+    let stringB = "                                         ";
+    let stringC = "f                                        ";
+    let stringD = "                                         ";
+    let stringE = "                                         ";
+    let stringF = "                                 f       ";
+    let stringG = "                                         ";
+    let stringH = "                                         ";
+    let stringI = "                         f               ";
+    let stringJ = "           f                             ";
+    let stringK = "                                         ";
+    let stringL = "                                         ";
+    let stringM = "                                         ";
+    let stringN = "             f                           ";
+    let stringO = "                                         ";
+    let stringP = "                                  f      ";
+    let stringQ = "                                         ";
+    let stringR = "f                                        ";
+    let stringS = "                                         ";
+    let stringT = "                                         ";
+    let myArr = [string1, string2, string3, string4, string5, string6, string7, string8, string9, string0, stringA, stringB, stringC, stringD, stringE, stringF, stringG, stringH, stringI, stringJ, stringK, stringL, stringM, stringN, stringO, stringP, stringQ, stringR, stringS, stringT];
     loadEmUp.readData(myArr, this.world_);
     this.world_.addView(new CanvasView(10));
     this.run();
@@ -437,24 +474,30 @@ class GameController {
     else throw new Error("Must provide a valid player.");
   }
   run() {
-    var lastTime = 0;
+    let lastTime = 0;
+    let giveTime = milliseconds => {
+      lastTime = milliseconds;
+      requestAnimationFrame(updateFrame);
+    }
     let updateFrame = milliseconds => {
       this.players_.forEach(x => x.makeTurn());
-      if((milliseconds - lastTime) > 25){
+      if((milliseconds - lastTime) > 250){
         this.world_.update(1);
-        lastTime = lastTime + 25;
+        lastTime = lastTime + 250;
       }
+      /**NEED TO CHANGE TO COUNT SNAKES */
       if(this.players_.length > 0) {
         requestAnimationFrame(updateFrame);
       }
       else {
+        console.log("sorry, I have to reset");
         this.players_ = [];
         this.world_.reset();
         this.game_.switchContext();
       }
     }
     if(this.players_.length > 1) {
-      requestAnimationFrame(updateFrame);
+      requestAnimationFrame(giveTime);
     }
     else {
       this.players_ = [];
@@ -558,8 +601,10 @@ class ArrayIterator {
   next() {
     let ind = this.index_++;
     let done = (ind === this.arr_.length)
+    console.log("checking length");
     let value = (done) ? undefined : this.arr_[ind];
     return {value: value, done: done};
+    console.log("looks good")
   }
   forEach(f) {
     this.arr_.forEach(x => f(x));
@@ -653,7 +698,7 @@ class Snake extends Collidable {
       if(s === this && this.parts_.slice(1).some(x => this.position.equals(x))) {
         return true;
       }
-      else if(s != this && s.parts_.some(x => this.position.equals(x))) {
+      else if(s !== this && s.parts_.some(x => this.position.equals(x))) {
         return true;
       }
       else return false;
@@ -674,16 +719,16 @@ class Snake extends Collidable {
   }
   grow() {
     if(this.direction === "left") {
-      this.parts_.push(new Point(this.parts_[this.parts.length - 1].posX + 1, this.parts_[this.parts.length - 1].posY));
+      this.parts_.push(new Point(this.parts_[this.parts_.length - 1].posX + 1, this.parts_[this.parts_.length - 1].posY));
     }
     else if(this.direction === "right") {
-      this.parts_.push(new Point(this.parts_[this.parts.length - 1].posX - 1, this.parts_[this.parts.length - 1].posY));
+      this.parts_.push(new Point(this.parts_[this.parts_.length - 1].posX - 1, this.parts_[this.parts_.length - 1].posY));
     }
     else if(this.direction === "down") {
-      this.parts_.push(new Point(this.parts_[this.parts.length - 1].posX, this.parts_[this.parts.length - 1].posY - 1));
+      this.parts_.push(new Point(this.parts_[this.parts_.length - 1].posX, this.parts_[this.parts_.length - 1].posY - 1));
     }
     else {
-      this.parts_.push(new Point(this.parts_[this.parts.length - 1].posX, this.parts_[this.parts.length - 1].posY + 1));
+      this.parts_.push(new Point(this.parts_[this.parts_.length - 1].posX, this.parts_[this.parts_.length - 1].posY + 1));
     }
   }
   get type() {
@@ -739,5 +784,6 @@ class Game {
 
 let hereWeGo = new Game();
 hereWeGo.run();
+
 
 
