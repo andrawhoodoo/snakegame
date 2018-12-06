@@ -6,6 +6,7 @@
 
 body {
   background-color: #666;
+  text-align: center;
 }
 
 canvas {
@@ -31,3 +32,5 @@ header {
   text-align: center;
   padding: 10px;
 }
+
+
