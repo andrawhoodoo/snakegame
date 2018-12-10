@@ -1,4 +1,92 @@
- /** Class representing a 2 dimensional point. */
+let snakeLevel = [];
+function levelCreation() {
+  let string1 = "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww";
+  let string2 = "w                                        w";
+  let string3 = "w                                        w";
+  let string4 = "w                                        w";
+  let string5 = "w                                        w";
+  let string6 = "w                                        w";
+  let string7 = "w                                        w";
+  let string8 = "w                                        w";
+  let string9 = "w                                        w";
+  let string10 = "w                                        w";
+  let string11 = "w                                        w";
+  let string12 = "w                                        w";
+  let string13 = "w                                        w";
+  let string14 = "w                                        w";
+  let string15 = "w                                        w";
+  let string16 = "w                                        w";
+  let string17 = "w                                        w";
+  let string18 = "w                                        w";
+  let string19 = "w                                        w";
+  let string20 = "w                                        w";
+  let string21 = "w                                        w";
+  let string22 = "w                                        w";
+  let string23 = "w                                        w";
+  let string24 = "w                                        w";
+  let string25 = "w                                        w";
+  let string26 = "w                                        w";
+  let string27 = "w                                        w";
+  let string28 = "w                                        w";
+  let string29 = "w                                        w";
+  let string30 = "w                                        w";
+  let string31 = "w                                        w";
+  let string32 = "w                                        w";
+  let string33 = "w                                        w";
+  let string34 = "w                                        w";
+  let string35 = "w                                        w";
+  let string36 = "w                                        w";
+  let string37 = "w                                        w";
+  let string38 = "w                                        w";
+  let string39 = "w                                        w";
+  let string40 = "w                                        w";
+  let string41 = "w                                        w";
+  let string42 = "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww";
+  snakeLevel.push(string1);
+  snakeLevel.push(string2);
+  snakeLevel.push(string3);
+  snakeLevel.push(string4);
+  snakeLevel.push(string5);
+  snakeLevel.push(string6);
+  snakeLevel.push(string7);
+  snakeLevel.push(string8);
+  snakeLevel.push(string9);
+  snakeLevel.push(string10);
+  snakeLevel.push(string11);
+  snakeLevel.push(string12);
+  snakeLevel.push(string13);
+  snakeLevel.push(string14);
+  snakeLevel.push(string15);
+  snakeLevel.push(string16);
+  snakeLevel.push(string17);
+  snakeLevel.push(string18);
+  snakeLevel.push(string19);
+  snakeLevel.push(string20);
+  snakeLevel.push(string21);
+  snakeLevel.push(string22);
+  snakeLevel.push(string23);
+  snakeLevel.push(string24);
+  snakeLevel.push(string25);
+  snakeLevel.push(string26);
+  snakeLevel.push(string27);
+  snakeLevel.push(string28);
+  snakeLevel.push(string29);
+  snakeLevel.push(string30);
+  snakeLevel.push(string31);
+  snakeLevel.push(string32);
+  snakeLevel.push(string33);
+  snakeLevel.push(string34);
+  snakeLevel.push(string35);
+  snakeLevel.push(string36);
+  snakeLevel.push(string37);
+  snakeLevel.push(string38);
+  snakeLevel.push(string39);
+  snakeLevel.push(string40);
+  snakeLevel.push(string41);
+  snakeLevel.push(string42);
+}
+
+/** Class representing a 2 dimensional point. */
 class Point {
   /**
    * Create a point.
@@ -47,10 +135,12 @@ class WorldModel {
    */
 
   update(steps) {
-    var foodParticles = this.actors_.filter(x => x.type === "Food");
+    let foodParticles = this.actors_.filter(x => x.type === "Food");
     if(foodParticles.length === 0) {
-      let pieceOfFood = new Food(Math.floor((this.width_)*Math.random()), Math.floor((this.height_)*Math.random()))
+      let pieceOfFood = new Food(Math.floor((this.width_)*Math.random()), Math.floor((this.height_)*Math.random()));
       this.addActor(pieceOfFood);
+      let wallUnit = new Wall(Math.floor((this.width_)*Math.random()), Math.floor((this.height_)*Math.random()));
+      this.addActor(wallUnit);
     }
     this.actors_.forEach(x => {
       if(x.type === "Snake") x.move(steps);
@@ -58,6 +148,9 @@ class WorldModel {
     this.actors_.forEach(x => {
       for(let index = 0; index < this.actors_.length; index ++) {
         if(x.type === "Snake" && x.didCollide(this.actors_[index])) {
+          this.aca_.applyCollisionAction(x, this.actors_[index]);
+        }
+        if(x.type === "Wall" && x.didCollide(this.actors_[index])) {
           this.aca_.applyCollisionAction(x, this.actors_[index]);
         }
       }
@@ -201,25 +294,25 @@ class AvoidWallsPlayer extends Player {
    * Turns the snake to avoid crashing into walls. Turns towards the direction in which there is the most space to move. If no collision with wall impending, does nothing.
    */
   makeTurn() {
-    if(this.sc_.snakeDirection === "left" && this.sc_.slitherer_.position.posX == 0) {
+    if(this.sc_.snakeDirection === "left" && this.sc_.slitherer_.position.posX == 1) {
       if(this.sc_.slitherer_.position.posY < ((this.sc_.worldHeight - 1)*(this.scalingFactor_))/2) {
         this.sc_.turnSnakeLeft();
       }
       else this.sc_.turnSnakeRight(); 
     }
-    else if(this.sc_.snakeDirection === "right" && this.sc_.slitherer_.position.posX == ((this.sc_.worldWidth - 1)*(this.scalingFactor_))) {
+    else if(this.sc_.snakeDirection === "right" && this.sc_.slitherer_.position.posX == ((this.sc_.worldWidth - 2)*(this.scalingFactor_))) {
       if(this.sc_.slitherer_.position.posY < ((this.sc_.worldHeight - 1)*(this.scalingFactor_))/2) {
         this.sc_.turnSnakeRight();
       }
       else this.sc_.turnSnakeLeft();
     }
-    else if(this.sc_.snakeDirection === "up" && this.sc_.slitherer_.position.posY == 0) {
+    else if(this.sc_.snakeDirection === "up" && this.sc_.slitherer_.position.posY == 1) {
       if(this.sc_.slitherer_.position.posX < ((this.sc_.worldWidth - 1)*(this.scalingFactor_))/2) {
         this.sc_.turnSnakeRight();
       }
       else this.sc_.turnSnakeLeft();
     }
-    else if(this.sc_.snakeDirection === "down" && this.sc_.slitherer_.position.posY == ((this.sc_.worldHeight - 1)*(this.scalingFactor_))) {
+    else if(this.sc_.snakeDirection === "down" && this.sc_.slitherer_.position.posY == ((this.sc_.worldHeight - 2)*(this.scalingFactor_))) {
       if(this.sc_.slitherer_.position.posX < ((this.sc_.worldWidth - 1)*(this.scalingFactor_))/2) {
         this.sc_.turnSnakeLeft();
       }
@@ -268,8 +361,12 @@ class CanvasView extends View {
           this.context_.fillRect(x.parts_[index].posX*this.scalingFactor_, x.parts_[index].posY*this.scalingFactor_, this.scalingFactor_, this.scalingFactor_);
         }
       }
-      else {
-        this.context_.fillStyle = "purple";
+      else if(x.type === "Food") {
+        this.context_.fillStyle = "rgb(0, 179, 202)";
+        this.context_.fillRect(x.position.posX*this.scalingFactor_, x.position.posY*this.scalingFactor_, this.scalingFactor_, this.scalingFactor_);
+      }
+      else if(x.type === "Wall") {
+        this.context_.fillStyle = "black";
         this.context_.fillRect(x.position.posX*this.scalingFactor_, x.position.posY*this.scalingFactor_, this.scalingFactor_, this.scalingFactor_);
       }
     });
@@ -380,6 +477,7 @@ class WorldLoader {
   readData(levelData, w) {
     levelData.forEach((item, index) => item.split("").forEach((a, x) => {
       if(a === "f") w.addActor(new Food(x, index));
+      else if (a === "w") w.addActor(new Wall(x, index));
     }));
   }
 }
@@ -394,6 +492,10 @@ class GameController {
     this.game_ = g;
     /** Manage potential collisions */
     let Handler = new ActorCollisionHandler;
+    let WFCH = new WallFoodCollisionHandler;
+    Handler.addCollisionAction("Wall", "Food", WFCH);
+    let SWCH = new SnakeWallCollisionHandler;
+    Handler.addCollisionAction("Snake", "Wall", SWCH);
     let SFCH = new SnakeFoodCollisionHandler;
     Handler.addCollisionAction("Snake", "Food", SFCH);
     let SSCH = new SnakeSnakeCollisionHandler;
@@ -406,21 +508,21 @@ class GameController {
     let myCols = ["red", "blue"];
     let compCols = ["green", "black", "yellow"]
     if(data.numOfHumanPlayers !== 0) {
-      for(let i=0; i < (data.numOfHumanPlayers); i++) {
-        let p = i*20;
+      for(let i=1; i < (data.numOfHumanPlayers + 1); i++) {
+        let p = i*5;
         let foo = new Point(p, p);
-        let snek = new Snake(foo, 5, myCols[i]);
+        let snek = new Snake(foo, 5, myCols[i-1]);
         let sc = new SnakeController(this.world_, snek);
-        let player = new HumanPlayer(sc, arr[i]);
+        let player = new HumanPlayer(sc, arr[i-1]);
         this.player = player;
         this.world_.addActor(snek);
       }
     }
     if(data.numOfAIPlayers !== 0) {
-      for(let i=0; i < (data.numOfAIPlayers); i++) {
-        let p = (i*20) + 40;
+      for(let i=1; i < (data.numOfAIPlayers + 1); i++) {
+        let p = (i*5) + 10;
         let foo = new Point(p, p);
-        let snek = new Snake(foo, 5, compCols[i]);
+        let snek = new Snake(foo, 5, compCols[i-1]);
         let sc = new SnakeController(this.world_, snek);
         let player = new AvoidWallsPlayer(sc, 1);
         this.player = player;
@@ -428,38 +530,8 @@ class GameController {
       }
     }
     let loadEmUp = new WorldLoader();
-    let string1 = "fffffffffff";
-    let string2 = "                                         ";
-    let string3 = "                                         ";
-    let string4 = "                         f               ";
-    let string5 = "           f                             ";
-    let string6 = "                                         ";
-    let string7 = "                                         ";
-    let string8 = "                                         ";
-    let string9 = "             f                           ";
-    let string0 = "                                         ";
-    let stringA = "                                  f      ";
-    let stringB = "                                         ";
-    let stringC = "f                                        ";
-    let stringD = "                                         ";
-    let stringE = "                                         ";
-    let stringF = "                                 f       ";
-    let stringG = "                                         ";
-    let stringH = "                                         ";
-    let stringI = "                         f               ";
-    let stringJ = "           f                             ";
-    let stringK = "                                         ";
-    let stringL = "                                         ";
-    let stringM = "                                         ";
-    let stringN = "             f                           ";
-    let stringO = "                                         ";
-    let stringP = "                                  f      ";
-    let stringQ = "                                         ";
-    let stringR = "f                                        ";
-    let stringS = "                                         ";
-    let stringT = "                                         ";
-    let myArr = [string1, string2, string3, string4, string5, string6, string7, string8, string9, string0, stringA, stringB, stringC, stringD, stringE, stringF, stringG, stringH, stringI, stringJ, stringK, stringL, stringM, stringN, stringO, stringP, stringQ, stringR, stringS, stringT];
-    loadEmUp.readData(myArr, this.world_);
+    levelCreation();
+    loadEmUp.readData(snakeLevel, this.world_);
     this.world_.addView(new CanvasView(10));
     this.run();
   }
@@ -481,19 +553,18 @@ class GameController {
     }
     let updateFrame = milliseconds => {
       this.players_.forEach(x => x.makeTurn());
-      if((milliseconds - lastTime) > 250){
+      if((milliseconds - lastTime) > 200){
         this.world_.update(1);
-        lastTime = lastTime + 250;
+        lastTime = lastTime + 200;
       }
-      /**NEED TO CHANGE TO COUNT SNAKES */
-      if(this.players_.length > 0) {
-        requestAnimationFrame(updateFrame);
-      }
-      else {
+      if(0)
         console.log("sorry, I have to reset");
         this.players_ = [];
         this.world_.reset();
         this.game_.switchContext();
+      }
+      else {
+        requestAnimationFrame(updateFrame);
       }
     }
     if(this.players_.length > 1) {
@@ -521,6 +592,32 @@ class Collidable extends Actor {
     super();
     if(this.constructor === Collidable) throw new Error("Cannot instantiate a Collidable which is an interface.");
     else if(!(this.didCollide instanceof Function)) throw new Error("Collidable must have a didCollide method.");
+  }
+}
+
+class Wall extends Collidable {
+  constructor(x, y) {
+    super();
+    this.position_ = new Point(x, y);
+    this.isActive_ = true;
+  }
+  get position() {
+    return this.position_;
+  }
+  get isActive() {
+    return this.isActive_;
+  }
+  get type() {
+    return "Wall";
+  }
+  update() {
+
+  }
+  didCollide(f) {
+    if(f.type === "Food") {
+      if(this.position_.equals(f.position)) return true;
+    }
+    else return false;
   }
 }
 
@@ -564,6 +661,15 @@ class SnakeFoodCollisionHandler extends CollisionHandler {
   }
 }
 
+class SnakeWallCollisionHandler extends CollisionHandler {
+  constructor() {
+    super();
+  }
+  applyAction(snake, wall) {
+    snake.die();
+  }
+}
+
 class SnakeSnakeCollisionHandler extends CollisionHandler {
   constructor() {
     super();
@@ -572,6 +678,16 @@ class SnakeSnakeCollisionHandler extends CollisionHandler {
     snake1.die();
   }
 }
+
+class WallFoodCollisionHandler extends CollisionHandler {
+  constructor() {
+    super();
+  }
+  applyAction(wall, food) {
+    food.eat();
+  }
+}
+
 
 class ActorCollisionHandler {
   constructor() {
@@ -601,10 +717,8 @@ class ArrayIterator {
   next() {
     let ind = this.index_++;
     let done = (ind === this.arr_.length)
-    console.log("checking length");
     let value = (done) ? undefined : this.arr_[ind];
     return {value: value, done: done};
-    console.log("looks good")
   }
   forEach(f) {
     this.arr_.forEach(x => f(x));
@@ -786,4 +900,15 @@ let hereWeGo = new Game();
 hereWeGo.run();
 
 
-
+let noSnakeChecker = done => {
+  let ArrIt = this.world_.actors;
+  if(ArrIt.next().done == done) {
+    return true;
+  }
+  if(ArrIt.next().value.type === "Snake") {
+    return false;
+  }
+  else if (ArrIt.next().value.type !== "Snake") {
+    return noSnakeChecker(false);
+  }
+}
