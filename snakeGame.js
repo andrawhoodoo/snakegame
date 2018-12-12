@@ -4,41 +4,41 @@ function levelCreation() {
   let string2 = "w                                        w";
   let string3 = "w                                        w";
   let string4 = "w                                        w";
-  let string5 = "w                                        w";
+  let string5 = "w   f                                    w";
   let string6 = "w                                        w";
   let string7 = "w                                        w";
-  let string8 = "w                                        w";
+  let string8 = "w                                 f      w";
   let string9 = "w                                        w";
   let string10 = "w                                        w";
-  let string11 = "w                                        w";
+  let string11 = "w         f                              w";
   let string12 = "w                                        w";
   let string13 = "w                                        w";
-  let string14 = "w                                        w";
+  let string14 = "w                           f            w";
   let string15 = "w                                        w";
   let string16 = "w                                        w";
-  let string17 = "w                                        w";
+  let string17 = "w               f                        w";
   let string18 = "w                                        w";
   let string19 = "w                                        w";
-  let string20 = "w                                        w";
+  let string20 = "w                     f                  w";
   let string21 = "w                                        w";
   let string22 = "w                                        w";
   let string23 = "w                                        w";
-  let string24 = "w                                        w";
+  let string24 = "w                 f                      w";
   let string25 = "w                                        w";
   let string26 = "w                                        w";
-  let string27 = "w                                        w";
+  let string27 = "w                         f              w";
   let string28 = "w                                        w";
   let string29 = "w                                        w";
-  let string30 = "w                                        w";
+  let string30 = "w           f                            w";
   let string31 = "w                                        w";
   let string32 = "w                                        w";
-  let string33 = "w                                        w";
+  let string33 = "w                               f        w";
   let string34 = "w                                        w";
   let string35 = "w                                        w";
-  let string36 = "w                                        w";
+  let string36 = "w     f                                  w";
   let string37 = "w                                        w";
   let string38 = "w                                        w";
-  let string39 = "w                                        w";
+  let string39 = "w                                     f  w";
   let string40 = "w                                        w";
   let string41 = "w                                        w";
   let string42 = "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww";
@@ -128,13 +128,15 @@ class WorldModel {
     this.height_ = h || 100;
     this.views_ = [];
     this.actors_ = [];
+    this.endGame_ = false;
   }
   /**
    * Moves the snake belonging to the WorldModel; updates the display of CanvasView if there is a paired CanvasView class with this WorldModel.
    * @param {int} steps - the input for the snake's move function.
    */
 
-  update(steps) {
+  update(steps) {;
+   if(!(this.actors_.some(x => (x.type === "Snake")))) this.endGame_ = true;
     let foodParticles = this.actors_.filter(x => x.type === "Food");
     if(foodParticles.length === 0) {
       let pieceOfFood = new Food(Math.floor((this.width_)*Math.random()), Math.floor((this.height_)*Math.random()));
@@ -163,6 +165,7 @@ class WorldModel {
     if(!(this.views_ == [])) {
       this.views_.forEach(x => x.display(this));
     }
+
   }
   /**
    * @type {tuple}
@@ -201,6 +204,10 @@ class WorldModel {
     this.views_.forEach(x => x.dispose());
     this.views_ = [];
     this.actors_ = [];
+    this.endGame_ = false;
+  }
+  get endGame() {
+    return this.endGame_;
   }
 }
 
@@ -506,8 +513,8 @@ class GameController {
   init(data) {
     let arr = [new LRKeyInputHandler, new ADKeyInputHandler];
     let myCols = ["red", "blue"];
-    let compCols = ["green", "black", "yellow"]
-    if(data.numOfHumanPlayers !== 0) {
+    let compCols = ["green", "black", "cyan", "purple", "magenta"]
+    if((data.numOfHumanPlayers !== 0) && (data.numOfHumanPlayers < 3)) {
       for(let i=1; i < (data.numOfHumanPlayers + 1); i++) {
         let p = i*5;
         let foo = new Point(p, p);
@@ -517,6 +524,9 @@ class GameController {
         this.player = player;
         this.world_.addActor(snek);
       }
+    }
+    if(data.numOfHumanPlayers > 2) {
+      
     }
     if(data.numOfAIPlayers !== 0) {
       for(let i=1; i < (data.numOfAIPlayers + 1); i++) {
@@ -557,7 +567,7 @@ class GameController {
         this.world_.update(1);
         lastTime = lastTime + 200;
       }
-      if(0)
+      if(this.world_.endGame === true) {
         console.log("sorry, I have to reset");
         this.players_ = [];
         this.world_.reset();
@@ -858,9 +868,9 @@ class MainMenuController {
     this.game_ = game;
     this.playGameButton_ = document.createElement("button");
     this.humanPlayersInput_ = document.createElement("input");
-    this.humanPlayersInput_.placeholder = "Enter number of Human players";
+    this.humanPlayersInput_.placeholder = "Enter # of Human players";
     this.aiPlayersInput_ = document.createElement("input");
-    this.aiPlayersInput_.placeholder = "Enter number of AI players";
+    this.aiPlayersInput_.placeholder = "Enter # of AI players";
     this.playGameButton_.appendChild(document.createTextNode("Start Game!"));  
     this.playGameButton_.addEventListener("click", this.switchContext_.bind(this));
   }
@@ -898,17 +908,3 @@ class Game {
 
 let hereWeGo = new Game();
 hereWeGo.run();
-
-
-let noSnakeChecker = done => {
-  let ArrIt = this.world_.actors;
-  if(ArrIt.next().done == done) {
-    return true;
-  }
-  if(ArrIt.next().value.type === "Snake") {
-    return false;
-  }
-  else if (ArrIt.next().value.type !== "Snake") {
-    return noSnakeChecker(false);
-  }
-}
