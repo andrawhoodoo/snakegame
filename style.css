@@ -5,7 +5,7 @@
 }
 
 body {
-  background-color: #666;
+  background-color: #aaa;
   text-align: center;
 }
 
@@ -26,11 +26,28 @@ header {
 
 #game-area {
   width: 80%;
-  background-color: #333;
   margin-left: 10%;
-  margin-top: 20%;
+  margin-top: 5%;
   text-align: center;
   padding: 10px;
 }
 
+.instructions {
+  width: 90%;
+  margin-left: 5%;
+  margin-top: 20px;
+  padding-top: 10px;
+  align-content: center;
+  background: #555;
+  color: #fff;
+}
 
+.controls {
+  text-align: left;
+  width: 450px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+  font-weight: bold;
+  padding-bottom: 10px;
+}
