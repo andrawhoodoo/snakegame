@@ -150,3 +150,5 @@ class Snake extends Collidable {
     return this.color_;
   }
 }
+
+module.exports = Snake;

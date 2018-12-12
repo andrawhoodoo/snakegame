@@ -86,15 +86,18 @@ class GameController {
         this.world_.update(1);
         lastTime = lastTime + 200;
       }
-      if(this.world_.endGame === true) {
+      let it = this.world_.actors;
+      let itemPair = it.next();
+      while (!itemPair.done && !(itemPair.value.type === "Snake")) {
+        itemPair = it.next(); 
+      }
+      if(itemPair.done) {
         console.log("sorry, I have to reset");
         this.players_ = [];
         this.world_.reset();
         this.game_.switchContext();
       }
-      else {
-        requestAnimationFrame(updateFrame);
-      }
+      else requestAnimationFrame(updateFrame);
     }
     if(this.players_.length > 0) {
       requestAnimationFrame(giveTime);

@@ -128,15 +128,13 @@ class WorldModel {
     this.height_ = h || 100;
     this.views_ = [];
     this.actors_ = [];
-    this.endGame_ = false;
   }
   /**
    * Moves the snake belonging to the WorldModel; updates the display of CanvasView if there is a paired CanvasView class with this WorldModel.
    * @param {int} steps - the input for the snake's move function.
    */
 
-  update(steps) {;
-   if(!(this.actors_.some(x => (x.type === "Snake")))) this.endGame_ = true;
+  update(steps) {
     let foodParticles = this.actors_.filter(x => x.type === "Food");
     if(foodParticles.length === 0) {
       let pieceOfFood = new Food(Math.floor((this.width_)*Math.random()), Math.floor((this.height_)*Math.random()));
@@ -204,10 +202,6 @@ class WorldModel {
     this.views_.forEach(x => x.dispose());
     this.views_ = [];
     this.actors_ = [];
-    this.endGame_ = false;
-  }
-  get endGame() {
-    return this.endGame_;
   }
 }
 
@@ -567,15 +561,18 @@ class GameController {
         this.world_.update(1);
         lastTime = lastTime + 200;
       }
-      if(this.world_.endGame === true) {
+      let it = this.world_.actors;
+      let itemPair = it.next();
+      while (!itemPair.done && !(itemPair.value.type === "Snake")) {
+        itemPair = it.next(); 
+      }
+      if(itemPair.done) {
         console.log("sorry, I have to reset");
         this.players_ = [];
         this.world_.reset();
         this.game_.switchContext();
       }
-      else {
-        requestAnimationFrame(updateFrame);
-      }
+      else requestAnimationFrame(updateFrame);
     }
     if(this.players_.length > 0) {
       requestAnimationFrame(giveTime);
@@ -908,3 +905,8 @@ class Game {
 
 let hereWeGo = new Game();
 hereWeGo.run();
+
+
+
+
+

@@ -43,3 +43,5 @@ class CanvasView extends View {
     document.body.removeChild(this.canvas_);
   }
 }
+
+module.exports = CanvasView;

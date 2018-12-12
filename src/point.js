@@ -30,3 +30,5 @@ class Point {
     else return false;
   }
 }
+
+module.exports = Point;

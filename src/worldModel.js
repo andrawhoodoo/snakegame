@@ -1,7 +1,7 @@
 /** Model Class representing a virtual world for a Snake. */
 class WorldModel {
   /**
-   * Creates a world model and ensures that an instance of Snake class is passed. Also initializes a views, actors, and end game property.
+   * Creates a world model and ensures that an instance of Snake class is passed. Also initializes a views, actors arrays
    * @param {class ActionCollisionHandler} aca - allows for interactions between the world's classes.
    * @param {int} w - width of desired world view.  If no int passed, default to 100.
    * @param {int} h - height of desired world view. If no int passed, default to 100.
@@ -12,17 +12,15 @@ class WorldModel {
     this.height_ = h || 100;
     this.views_ = [];
     this.actors_ = [];
-    this.endGame_ = false;
+
   }
   /**
    * Moves the snake belonging to the WorldModel, checks for collisions between actors.
    * Updates the display of CanvasView if there is a paired CanvasView class with this WorldModel.
-   * If there are no snakes remaining, ends the current game.
    * @param {int} steps - the input for the snake's move function.
    */
 
-  update(steps) {;
-   if(!(this.actors_.some(x => (x.type === "Snake")))) this.endGame_ = true;
+  update(steps) {
     let foodParticles = this.actors_.filter(x => x.type === "Food");
     if(foodParticles.length === 0) {
       let pieceOfFood = new Food(Math.floor((this.width_)*Math.random()), Math.floor((this.height_)*Math.random()));
@@ -104,12 +102,7 @@ class WorldModel {
     this.views_.forEach(x => x.dispose());
     this.views_ = [];
     this.actors_ = [];
-    this.endGame_ = false;
-  }
-  /**
-   * @type {boolean} 
-   */
-  get endGame() {
-    return this.endGame_;
   }
 }
+
+module.exports = WorldModel;
