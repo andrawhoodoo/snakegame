@@ -577,7 +577,7 @@ class GameController {
         requestAnimationFrame(updateFrame);
       }
     }
-    if(this.players_.length > 1) {
+    if(this.players_.length > 0) {
       requestAnimationFrame(giveTime);
     }
     else {
