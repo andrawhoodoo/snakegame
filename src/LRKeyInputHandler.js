@@ -16,3 +16,5 @@ class LRKeyInputHandler extends KeyInputHandler {
     window.addEventListener("keydown", eventHandler);  
   }
 }
+
+module.exports = LRKeyInputHandler;

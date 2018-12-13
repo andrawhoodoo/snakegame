@@ -6,3 +6,5 @@ class Collidable extends Actor {
     else if(!(this.didCollide instanceof Function)) throw new Error("Collidable must have a didCollide method.");
   }
 }
+
+module.exports = Collidable;

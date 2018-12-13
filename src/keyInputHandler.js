@@ -30,3 +30,5 @@ class KeyInputHandler extends InputHandler {
     this.wasRightPushed_ = false;
   }
 }
+
+module.exports = KeyInputHandler;

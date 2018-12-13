@@ -16,3 +16,5 @@ class ADKeyInputHandler extends KeyInputHandler {
     window.addEventListener("keydown", eventHandler);  
   }
 }
+
+module.exports = ADKeyInputHandler;

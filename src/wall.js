@@ -44,3 +44,5 @@ class Wall extends Collidable {
     else return false;
   }
 }
+
+module.exports = Wall;

@@ -17,3 +17,5 @@ class Player {
     return this.sc_.isSnakeActive;
   }
 }
+
+module.exports = Player;

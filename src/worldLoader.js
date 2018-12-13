@@ -13,3 +13,5 @@ class WorldLoader {
     }));
   }
 }
+
+module.exports = WorldLoader;

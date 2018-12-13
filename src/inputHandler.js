@@ -10,3 +10,5 @@ class InputHandler {
     if(!(this.resetLeftMove instanceof Function)) throw new Error("input handler must have resetLeftMove method");
   }
 }
+
+module.exports = InputHandler;

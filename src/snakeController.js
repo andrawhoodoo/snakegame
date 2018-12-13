@@ -58,3 +58,5 @@ class SnakeController {
     return this.slitherer_.isActive;
   }
 }
+
+module.exports = SnakeController;

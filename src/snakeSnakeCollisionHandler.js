@@ -12,3 +12,5 @@ class SnakeSnakeCollisionHandler extends CollisionHandler {
     snake1.die();
   }
 }
+
+module.exports = SnakeSnakeCollisionHandler;

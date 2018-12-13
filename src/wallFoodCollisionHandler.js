@@ -12,3 +12,4 @@ class WallFoodCollisionHandler extends CollisionHandler {
     food.eat();
   }
 }
+module.exports = WallFoodCollisionHandler;

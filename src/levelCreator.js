@@ -85,3 +85,5 @@ function levelCreation() {
   snakeLevel.push(string41);
   snakeLevel.push(string42);
 }
+
+module.exports = levelCreation;

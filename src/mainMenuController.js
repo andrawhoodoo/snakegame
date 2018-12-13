@@ -33,3 +33,5 @@ class MainMenuController {
     this.game_.switchContext({numOfHumanPlayers: parseInt(this.humanPlayersInput_.value), numOfAIPlayers: parseInt(this.aiPlayersInput_.value)});
   }
 }
+
+module.exports = MainMenuController;

@@ -5,3 +5,5 @@ class CollisionHandler {
     else if(!(this.applyAction instanceof Function)) throw new Error("Collision Handler must have an applyAction method.");
   }
 }
+
+module.exports = CollisionHandler;

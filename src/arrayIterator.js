@@ -18,3 +18,5 @@ class ArrayIterator {
     this.arr_.forEach(x => f(x));
   }
 }
+
+module.exports = ArrayIterator;

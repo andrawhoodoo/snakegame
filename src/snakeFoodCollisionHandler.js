@@ -13,3 +13,5 @@ class SnakeFoodCollisionHandler extends CollisionHandler {
     snake.grow();
   }
 }
+
+module.exports = SnakeFoodCollisionHandler;

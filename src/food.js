@@ -40,3 +40,5 @@ class Food extends Actor {
 
   }
 }
+
+module.exports = Food;

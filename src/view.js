@@ -9,3 +9,5 @@ class View {
     else if(!(this.dispose instanceof Function)) throw new Error("View class must implement dispose method.");
   }
 }
+
+module.exports = View;

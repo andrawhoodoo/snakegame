@@ -33,3 +33,5 @@ class Game {
 
 let SnakeGame = new Game();
 SnakeGame.run();
+
+module.exports = Game;

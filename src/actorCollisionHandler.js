@@ -42,3 +42,5 @@ class ActorCollisionHandler {
     }
   }
 }
+
+module.exports = ActorCollisionHandler;
