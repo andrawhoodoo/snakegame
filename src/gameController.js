@@ -50,7 +50,7 @@ class GameController {
         let foo = new Point(p, p);
         let snek = new Snake(foo, 5, compCols[i-1]);
         let sc = new SnakeController(this.world_, snek);
-        let player = new AvoidWallsPlayer(sc, 1);
+        let player = new AvoidWallsPlayer(sc);
         this.player = player;
         this.world_.addActor(snek);
       }
