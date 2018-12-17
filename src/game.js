@@ -16,7 +16,7 @@ class Game {
   }
   /**
    * Method that gets the current context, changes it, and calls init method of the new context.
-   * @param {JSON object} data - object containing the input values of the document.
+   * @param {object} data - object containing the input values of the document.
    */
   switchContext(data) {
     this.currentContext_ = this.contextSwitches_.get(this.currentContext_);
@@ -24,7 +24,7 @@ class Game {
   }
   /**
    * Method that gets the current context and calls its init method.
-   * @param {JSON object} data - object containing the input values of the document.
+   * @param {object} data - object containing the input values of the document.
    */
   run(data) {
     this.controllers_.get(this.currentContext_).init(data);
@@ -33,5 +33,3 @@ class Game {
 
 let SnakeGame = new Game();
 SnakeGame.run();
-
-module.exports = Game;

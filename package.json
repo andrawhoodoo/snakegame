@@ -1,0 +1,33 @@
+{
+  "name": "snakegame",
+  "version": "1.0.0",
+  "description": "A fun snake game",
+  "main": "gulpfile.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrawhoodoo/snakegame.git"
+  },
+  "author": "Andrew Dacunto",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andrawhoodoo/snakegame/issues"
+  },
+  "homepage": "https://github.com/andrawhoodoo/snakegame#readme",
+  "dependencies": {
+    "@babel/core": "^7.2.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-jasmine": "^4.0.0",
+    "gulp-jsdoc3": "^2.0.0",
+    "gulp-terser": "^1.1.6"
+  },
+  "devDependencies": {
+    "gulp-next": "^1.0.9"
+  }
+}

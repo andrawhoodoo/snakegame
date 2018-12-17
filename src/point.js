@@ -23,7 +23,7 @@ class Point {
   }
 	/**
 	 *Method that returns true when a point p has the same position as this point.
-	 * @param {class Point} p - the point whose position you wish to compare to your own.
+	 * @param {class} p - the point whose position you wish to compare to your own.
 	 */
   equals(p) {
     if(p.posX == this.posX && p.posY == this.posY) return true;
@@ -31,4 +31,3 @@ class Point {
   }
 }
 
-module.exports = Point;

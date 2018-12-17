@@ -5,8 +5,8 @@ class SnakeFoodCollisionHandler extends CollisionHandler {
   }
   /**
    * Method that causes the food to disappear and the snake to increase in size.
-   * @param {class Snake} snake - the Snake actor participating in the collision.
-   * @param {class Food} food - the Food actor participating in the collision.
+   * @param {class} snake - the Snake actor participating in the collision.
+   * @param {class} food - the Food actor participating in the collision.
    */
   applyAction(snake, food) {
     food.eat();
@@ -14,4 +14,3 @@ class SnakeFoodCollisionHandler extends CollisionHandler {
   }
 }
 
-module.exports = SnakeFoodCollisionHandler;

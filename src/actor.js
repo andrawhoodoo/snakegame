@@ -5,5 +5,3 @@ class Actor {
     else if(!(this.update instanceof Function)) throw new Error("Actor must have an update method.");
   }
 }
-
-module.exports = Actor;

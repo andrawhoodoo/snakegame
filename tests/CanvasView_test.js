@@ -1,3 +1,4 @@
+const View = require("../src/view.js")
 const CanvasView = require("../src/canvasView.js");
 const Point = require("../src/point.js");
 const Snake = require("../src/snake.js");

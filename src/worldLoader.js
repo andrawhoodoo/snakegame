@@ -4,7 +4,7 @@ class WorldLoader {
   /**
    * Method that takes a level and adds the actors to the world model.
    * @param {array} levelData - an array of strings from the levelCreator.
-   * @param {class WorldModel} - the world model you are loading the level to.
+   * @param {class} - the world model you are loading the level to.
    */
   readData(levelData, w) {
     levelData.forEach((item, index) => item.split("").forEach((a, x) => {
@@ -13,5 +13,3 @@ class WorldLoader {
     }));
   }
 }
-
-module.exports = WorldLoader;

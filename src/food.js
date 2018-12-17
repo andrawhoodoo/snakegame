@@ -16,7 +16,7 @@ class Food extends Actor {
     this.isActive_ = false;
   }
   /**
-   * @type {class Point}
+   * @type {class}
    */
   get position() {
     return this.position_;
@@ -41,4 +41,3 @@ class Food extends Actor {
   }
 }
 
-module.exports = Food;

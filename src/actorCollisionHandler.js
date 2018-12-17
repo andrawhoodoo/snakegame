@@ -18,7 +18,7 @@ class ActorCollisionHandler {
    * Method that utilizes the private toKey_ method to add the appropriate collision handler for the string of colliders to the map property.
    * @param {string} colliderType - type property of the actor that collided.
    * @param {string} collidedType - type property of the actor that was collided into.
-   * @param {class CollisionHandler} actionApplicator - the collision handler you are assigning to handle the collision.
+   * @param {CollisionHandler} actionApplicator - the collision handler you are assigning to handle the collision.
    */
   addCollisionAction(colliderType, collidedType, actionApplicator) {
     this.pairs_.set(this.toKey_(colliderType, collidedType), actionApplicator);
@@ -33,8 +33,8 @@ class ActorCollisionHandler {
   }
   /**
    * Method that carries out the actionApplicator's applyAction method based on the search in the pairs_ property for a given collision.
-   * @param {class Collidable} collider - the object that collided.
-   * @param {class Actor} collided - the object that was collided into.
+   * @param {Collidable} collider - the object that collided.
+   * @param {Actor} collided - the object that was collided into.
    */
   applyCollisionAction(collider, collided) {
     if(this.hasCollisionAction(collider.type, collided.type)) {
@@ -42,5 +42,3 @@ class ActorCollisionHandler {
     }
   }
 }
-
-module.exports = ActorCollisionHandler;

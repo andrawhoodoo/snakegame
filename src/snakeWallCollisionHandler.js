@@ -5,12 +5,11 @@ class SnakeWallCollisionHandler extends CollisionHandler {
   }
   /**
    * Method that causes the snake to disappear.
-   * @param {class Snake} snake - the Snake actor participating in the collision.
-   * @param {class Wall} wall - the Wall actor participating in the collision.
+   * @param {class} snake - the Snake actor participating in the collision.
+   * @param {class} wall - the Wall actor participating in the collision.
    */
   applyAction(snake, wall) {
     snake.die();
   }
 }
 
-module.exports = SnakeWallCollisionHandler;

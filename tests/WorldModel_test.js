@@ -1,3 +1,4 @@
+const View = require("../src/view.js")
 const Point = require("../src/point.js");
 const Snake = require("../src/snake.js");
 const ActorCollisionHandler = require("../src/actorCollisionHandler.js");

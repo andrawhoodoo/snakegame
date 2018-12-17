@@ -2,7 +2,7 @@
 class WorldModel {
   /**
    * Creates a world model and ensures that an instance of Snake class is passed. Also initializes a views, actors arrays
-   * @param {class ActionCollisionHandler} aca - allows for interactions between the world's classes.
+   * @param {class} aca - allows for interactions between the world's classes.
    * @param {int} w - width of desired world view.  If no int passed, default to 100.
    * @param {int} h - height of desired world view. If no int passed, default to 100.
    */
@@ -70,14 +70,14 @@ class WorldModel {
     return this.height_;
   }
   /**
-   * @type {class CanvasView}
+   * @type {class}
    */	
   get view() {
     return this.views_[0];
   }
   /**
    * Adds an actor to the actors array.
-   * @param {class Actor} a - the actor you wish to add. 
+   * @param {class} a - the actor you wish to add. 
    */	
   addActor(a) {
     if(a instanceof Actor) {
@@ -87,7 +87,7 @@ class WorldModel {
   }
   /**
    * Adds a view to the views array.
-   * @param {class CanvasView} v - the CanvasView you wish to add. 
+   * @param {class} v - the CanvasView you wish to add. 
    */
   addView(v) {
     if(v instanceof View) {
@@ -104,5 +104,3 @@ class WorldModel {
     this.actors_ = [];
   }
 }
-
-module.exports = WorldModel;

@@ -38,4 +38,4 @@ class AvoidWallsPlayer extends Player {
   }
 }
 
-module.exports = AvoidWallsPlayer;
+

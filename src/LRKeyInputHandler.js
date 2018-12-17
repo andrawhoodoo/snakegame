@@ -17,4 +17,3 @@ class LRKeyInputHandler extends KeyInputHandler {
   }
 }
 
-module.exports = LRKeyInputHandler;

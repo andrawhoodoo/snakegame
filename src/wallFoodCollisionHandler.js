@@ -5,11 +5,10 @@ class WallFoodCollisionHandler extends CollisionHandler {
   }
   /**
    * Method that causes the food to be destroyed.
-   * @param {class Wall} wall - the Wall actor participating in the collision.
-   * @param {class Food} food - the Food actor participating in the collision.
+   * @param {class} wall - the Wall actor participating in the collision.
+   * @param {class} food - the Food actor participating in the collision.
    */
   applyAction(wall, food) {
     food.eat();
   }
 }
-module.exports = WallFoodCollisionHandler;

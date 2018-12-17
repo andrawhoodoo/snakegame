@@ -31,4 +31,3 @@ class KeyInputHandler extends InputHandler {
   }
 }
 
-module.exports = KeyInputHandler;

@@ -2,7 +2,7 @@
 class GameController {
   /**
    * Create a GameController, initialize a players array, create a world model class and collision handlers classes for each possible interaction you want to include.
-   * @param {class Game} g - The game you wish to use.
+   * @param {class} g - The game you wish to use.
    */
   constructor(g) {
     this.game_ = g;
@@ -110,4 +110,3 @@ class GameController {
   }
 }
 
-module.exports = GameController;

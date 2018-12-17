@@ -59,4 +59,3 @@ class SnakeController {
   }
 }
 
-module.exports = SnakeController;

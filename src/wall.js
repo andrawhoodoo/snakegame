@@ -10,7 +10,7 @@ class Wall extends Collidable {
     this.isActive_ = true;
   }
   /**
-   * @type {class Point}
+   * @type {class}
    */
   get position() {
     return this.position_;
@@ -35,7 +35,7 @@ class Wall extends Collidable {
   }
   /**
    * Method checking whether or not the wall collides with food actor; returns a boolean. Semantically odd, but ensures food does not spawn inside of wall. if it does, the food is destroyed.
-   * @param {class Food} f - the food in question.
+   * @param {class} f - the food in question.
    */
   didCollide(f) {
     if(f.type === "Food") {
@@ -44,5 +44,3 @@ class Wall extends Collidable {
     else return false;
   }
 }
-
-module.exports = Wall;

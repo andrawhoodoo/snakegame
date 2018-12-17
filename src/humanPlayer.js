@@ -23,4 +23,3 @@ class HumanPlayer extends Player {
     }
   }
 }
-module.exports = HumanPlayer;

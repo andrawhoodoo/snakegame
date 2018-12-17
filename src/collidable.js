@@ -7,4 +7,3 @@ class Collidable extends Actor {
   }
 }
 
-module.exports = Collidable;

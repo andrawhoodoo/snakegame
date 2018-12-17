@@ -2,7 +2,7 @@
 class Snake extends Collidable {
   /**
    * Create a snake.
-   * @param {class Point} startPosition - the starting position of the head of the Snake.
+   * @param {class} startPosition - the starting position of the head of the Snake.
    * @param {int} size - the desired size of the Snake.
    * @param {string} color - the desired color of the Snake.
    */
@@ -84,7 +84,7 @@ class Snake extends Collidable {
   }
   /**
    * Method that determines if the snake collided with either itself or another actor.
-   * @param {class Actor} s - the actor you wish to see if you collided with.
+   * @param {class} s - the actor you wish to see if you collided with.
    */
   didCollide(s) {
     if(s instanceof Snake) {  
@@ -150,5 +150,3 @@ class Snake extends Collidable {
     return this.color_;
   }
 }
-
-module.exports = Snake;
