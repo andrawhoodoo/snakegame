@@ -236,8 +236,7 @@ class Snake extends Collidable {
       else return false;
     }
     else {
-      if(this.position.equals(s.position)) return true;
-      else return false;
+      return (this.position.equals(s.position));
     }
   }
   /**
@@ -325,10 +324,7 @@ class WorldModel {
     });
     this.actors_.forEach(x => {
       for(let index = 0; index < this.actors_.length; index ++) {
-        if(x.type === "Snake" && x.didCollide(this.actors_[index])) {
-          this.aca_.applyCollisionAction(x, this.actors_[index]);
-        }
-        if(x.type === "Wall" && x.didCollide(this.actors_[index])) {
+        if(x.didCollide(this.actors_[index])) {
           this.aca_.applyCollisionAction(x, this.actors_[index]);
         }
       }
@@ -338,10 +334,7 @@ class WorldModel {
       if(!(this.actors_[index].isActive)) this.actors_.splice(index, 1);
       }
     });
-    if(!(this.views_ == [])) {
-      this.views_.forEach(x => x.display(this));
-    }
-
+    this.views_.forEach(x => x.display(this));
   }
   /**
    * @type {tuple}
