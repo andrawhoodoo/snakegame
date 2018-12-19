@@ -236,7 +236,7 @@ class Snake extends Collidable {
       else return false;
     }
     else {
-      return (this.position.equals(s.position));
+      return (this.position.equals(s.position))
     }
   }
   /**
@@ -324,7 +324,7 @@ class WorldModel {
     });
     this.actors_.forEach(x => {
       for(let index = 0; index < this.actors_.length; index ++) {
-        if((x.type === "Snake" || x.type ==="Wall") && x.didCollide(this.actors_[index])) {
+        if((x.type === "Snake" || x.type === "Wall") && x.didCollide(this.actors_[index])) {
           this.aca_.applyCollisionAction(x, this.actors_[index]);
         }
       }
@@ -334,7 +334,7 @@ class WorldModel {
       if(!(this.actors_[index].isActive)) this.actors_.splice(index, 1);
       }
     });
-    this.views_.forEach(x => x.display(this));
+	this.views_.forEach(x => x.display(this));
   }
   /**
    * @type {tuple}
@@ -395,7 +395,7 @@ class WorldModel {
 class SnakeController {
   /**
    * Create a new SnakeController.
-   * @param {WorldModel} world - the WorldModel you want to use.
+   * @param {WorldModel} world - the WorldModel you wish to use.
    * @param {Snake} slitherer - the Snake you wish to use.
    */
   constructor(world, slitherer) {
