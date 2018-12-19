@@ -324,7 +324,7 @@ class WorldModel {
     });
     this.actors_.forEach(x => {
       for(let index = 0; index < this.actors_.length; index ++) {
-        if(x.didCollide(this.actors_[index])) {
+        if((x.type === "Snake" || x.type ==="Wall") && x.didCollide(this.actors_[index])) {
           this.aca_.applyCollisionAction(x, this.actors_[index]);
         }
       }
