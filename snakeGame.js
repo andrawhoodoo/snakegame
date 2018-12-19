@@ -395,7 +395,7 @@ class WorldModel {
 class SnakeController {
   /**
    * Create a new SnakeController.
-   * @param {WorldModel} world - the WorldModel you wish to use.
+   * @param {WorldModel} world - the WorldModel you want to use.
    * @param {Snake} slitherer - the Snake you wish to use.
    */
   constructor(world, slitherer) {
